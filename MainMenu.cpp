@@ -3021,6 +3021,8 @@ void cMainMenu::CreateWidgets()
 	vPos.y += 37;
 	AddWidgetToState(eMainMenuState_Options,hplNew( cMainMenuWidget_Button,(mpInit,vPos,kTranslate("MainMenu","Graphics"),eMainMenuState_OptionsGraphics,25,eFontAlign_Center)) );
 	vPos.y += 37;
+	AddWidgetToState(eMainMenuState_Options,hplNew( cMainMenuWidget_Button,(mpInit,vPos,kTranslate("MainMenu","OpenIL"),eMainMenuState_OptionsOpenIL,25,eFontAlign_Center)) );
+	vPos.y += 37;
 	AddWidgetToState(eMainMenuState_Options,hplNew( cMainMenuWidget_Button,(mpInit,vPos,kTranslate("MainMenu","Back"),eMainMenuState_Start,25,eFontAlign_Center)) );
 
 	///////////////////////////////////
