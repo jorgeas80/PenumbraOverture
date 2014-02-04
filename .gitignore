@@ -188,3 +188,7 @@ Desktop.ini
 
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
+Penumbra.map
+Penumbra.sln.old
+Penumbra.vcxproj
+Penumbra.vcxproj.filters
