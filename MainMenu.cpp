@@ -1202,8 +1202,28 @@ public:
 //////////////////////////////////////////////////////////////////////////
 // OPTIONS OPENIL
 //////////////////////////////////////////////////////////////////////////
+cMainMenuWidget_Text *gpOpenILText=NULL;
 
-// See class cMainMenuWidget_SoundHardware, and try to replicate it for OpenIL
+class cMainMenuWidget_OpenIL : public cMainMenuWidget_Button
+{
+public:
+	cMainMenuWidget_OpenIL(cInit *apInit, const cVector3f &avPos, const tWString& asText,cVector2f avFontSize, eFontAlign aAlignment)
+		: cMainMenuWidget_Button(apInit,avPos,asText,eMainMenuState_LastEnum,avFontSize,aAlignment)
+	{
+		msTip = kTranslate("MainMenu", "EnableOpenIL");
+	}
+
+	void OnMouseDown(eMButton aButton)
+	{
+		mpInit->mbUseOpenIL = !mpInit->mbUseOpenIL;
+
+		gpOpenILText->msText = mpInit->mbUseOpenIL ?
+			kTranslate("MainMenu","On") : kTranslate("MainMenu","Off");
+
+		gbMustRestart = true;
+	}
+};
+
 
 //////////////////////////////////////////////////////////////////////////
 // OPTIONS GAME
@@ -3000,9 +3020,6 @@ void cMainMenu::CreateWidgets()
 		
 		vPos.x += 205;
 		AddWidgetToState(state,hplNew( cMainMenuWidget_RemoveSaveGame,(mpInit,vPos,kTranslate("MainMenu","Remove"),17,eFontAlign_Left,sDir,(int)i)) ); 
-		
-		
-        
 	}
 
 	///////////////////////////////////
@@ -3427,7 +3444,6 @@ void cMainMenu::CreateWidgets()
 	vPos.y += 35;
     AddWidgetToState(eMainMenuState_OptionsSound,hplNew( cMainMenuWidget_GfxBack, (mpInit,vPos,kTranslate("MainMenu","Back"),23,eFontAlign_Center)) ); 
 
-
 	//Text
 	vPos = cVector3f(vTextStart.x+12, vTextStart.y+37, vTextStart.z);
 
@@ -3640,6 +3656,14 @@ void cMainMenu::CreateWidgets()
 						NULL,400)) ); 
 	vPos.y += 42;
 	AddWidgetToState(eMainMenuState_GraphicsRestart,hplNew( cMainMenuWidget_Button,(mpInit,vPos,kTranslate("MainMenu","OK"),eMainMenuState_Options,22,eFontAlign_Center))); 
+
+	///////////////////////////////////
+	// Options OpenIL
+	///////////////////////////////////
+	vPos = vTextStart;//cVector3f(400, 260, 40);
+	vPos.y += 29;
+	cMainMenuWidget *pWidgetOpenIL = hplNew( cMainMenuWidget_OpenIL, (mpInit,vPos,kTranslate("MainMenu","Use OpenIL:"),20,eFontAlign_Right) );
+	AddWidgetToState(eMainMenuState_OptionsOpenIL,pWidgetOpenIL); 
 	
 }
 

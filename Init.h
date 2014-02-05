@@ -136,6 +136,7 @@ public:
     int mlStreamUpdateFreq;
 	bool mbUseSoundHardware;
 	bool mbUseSoundThreading;
+	bool mbUseOpenIL;
 	int mlMaxMonoChannelsHint;
 	int mlMaxStereoChannelsHint;
 	tString msDeviceName;
