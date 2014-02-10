@@ -139,7 +139,6 @@ public:
 	int mlMaxMonoChannelsHint;
 	int mlMaxStereoChannelsHint;
 	tString msDeviceName;
-	bool mbUseOpenIL;
 
 	ePhysicsAccuracy mPhysicsAccuracy;
 	float mfPhysicsUpdatesPerSec;

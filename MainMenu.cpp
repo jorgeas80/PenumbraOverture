@@ -1200,29 +1200,6 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////
-// OPTIONS OPENIL
-//////////////////////////////////////////////////////////////////////////
-cMainMenuWidget_Text *gpEnableOpenILText=NULL;
-class cMainMenuWidget_OpenIL : public cMainMenuWidget_Button
-{
-public:
-	cMainMenuWidget_OpenIL(cInit *apInit, const cVector3f &avPos, const tWString& asText,cVector2f avFontSize, eFontAlign aAlignment)
-								: cMainMenuWidget_Button(apInit,avPos,asText,eMainMenuState_LastEnum,avFontSize,aAlignment)
-	{
-		msTip = kTranslate("MainMenu", "TipEnableOpenIL");
-	}
-	
-	void OnMouseDown(eMButton aButton)
-	{
-		mpInit->mbUseOpenIL = !mpInit->mbUseOpenIL;
-		gpEnableOpenILText->msText = mpInit->mbUseOpenIL ? 
-			kTranslate("MainMenu","On") : kTranslate("MainMenu","Off");
-	}
-};
-
-
-
-//////////////////////////////////////////////////////////////////////////
 // OPTIONS GAME
 //////////////////////////////////////////////////////////////////////////
 
@@ -3017,6 +2994,9 @@ void cMainMenu::CreateWidgets()
 		
 		vPos.x += 205;
 		AddWidgetToState(state,hplNew( cMainMenuWidget_RemoveSaveGame,(mpInit,vPos,kTranslate("MainMenu","Remove"),17,eFontAlign_Left,sDir,(int)i)) ); 
+		
+		
+        
 	}
 
 	///////////////////////////////////
@@ -3040,8 +3020,6 @@ void cMainMenu::CreateWidgets()
 	AddWidgetToState(eMainMenuState_Options,hplNew( cMainMenuWidget_Button,(mpInit,vPos,kTranslate("MainMenu","Sound"),eMainMenuState_OptionsSound,25,eFontAlign_Center)) );
 	vPos.y += 37;
 	AddWidgetToState(eMainMenuState_Options,hplNew( cMainMenuWidget_Button,(mpInit,vPos,kTranslate("MainMenu","Graphics"),eMainMenuState_OptionsGraphics,25,eFontAlign_Center)) );
-	vPos.y += 37;
-	AddWidgetToState(eMainMenuState_Options,hplNew( cMainMenuWidget_Button,(mpInit,vPos,kTranslate("MainMenu","OpenIL"),eMainMenuState_OptionsOpenIL,25,eFontAlign_Center)) );
 	vPos.y += 37;
 	AddWidgetToState(eMainMenuState_Options,hplNew( cMainMenuWidget_Button,(mpInit,vPos,kTranslate("MainMenu","Back"),eMainMenuState_Start,25,eFontAlign_Center)) );
 
@@ -3441,6 +3419,7 @@ void cMainMenu::CreateWidgets()
 	vPos.y += 35;
     AddWidgetToState(eMainMenuState_OptionsSound,hplNew( cMainMenuWidget_GfxBack, (mpInit,vPos,kTranslate("MainMenu","Back"),23,eFontAlign_Center)) ); 
 
+
 	//Text
 	vPos = cVector3f(vTextStart.x+12, vTextStart.y+37, vTextStart.z);
 
@@ -3653,21 +3632,7 @@ void cMainMenu::CreateWidgets()
 						NULL,400)) ); 
 	vPos.y += 42;
 	AddWidgetToState(eMainMenuState_GraphicsRestart,hplNew( cMainMenuWidget_Button,(mpInit,vPos,kTranslate("MainMenu","OK"),eMainMenuState_Options,22,eFontAlign_Center))); 
-
-	///////////////////////////////////
-	// Options OpenIL
-	///////////////////////////////////
-	vPos = vTextStart;//cVector3f(400, 260, 40);
-	AddWidgetToState(eMainMenuState_OptionsOpenIL,hplNew( cMainMenuWidget_Text,(mpInit,vPos,kTranslate("MainMenu","OpenIL"),25,eFontAlign_Center)) ); 
-
-	// TODO: Check the process to read from config files and init needed subsystems. Add OpenIL as one of those needed subsystems
-	//vPos.y += 42;
-	//cMainMenuWidget *pWidgetEnableOpenIL = hplNew( cMainMenuWidget_OpenIL,(mpInit,vPos,kTranslate("MainMenu","Enable OpenIL:"),20,eFontAlign_Right) );
-	//AddWidgetToState(eMainMenuState_OptionsOpenIL, pWidgetEnableOpenIL); 
-
-
-	vPos.y += 42;
-	AddWidgetToState(eMainMenuState_OptionsOpenIL,hplNew( cMainMenuWidget_GfxBack,(mpInit,vPos,kTranslate("MainMenu","Back"),23,eFontAlign_Center)) );
+	
 }
 
 //-----------------------------------------------------------------------

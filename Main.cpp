@@ -20,18 +20,11 @@
 
 #include "Init.h"
 
-// OpenIL includes
-#include "IL_Utils.h"
-#include "IL_EffectSource.h"
-#include "IL_LightSource.h"
-
 #include "SDL/SDL.h"
 
 #ifdef WIN32
 	#include <windows.h>
 #endif
-
-using namespace openil;
 
 int hplMain(const tString& asCommandLine)
 {

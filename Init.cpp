@@ -388,8 +388,6 @@ bool cInit::Init(tString asCommandLine)
 	//mlStreamBufferCount = mpConfig->GetInt("Sound", "StreamBufferCount", 4);
 	msDeviceName = mpConfig->GetString("Sound","DeviceName","NULL");
 
-	mbUseOpenIL = mpConfig->GetBool("OpenIL","Enabled",true);
-
 	iGpuProgram::SetLogDebugInformation(true);
 	iResourceBase::SetLogCreateAndDelete(mbLogResources);
 
