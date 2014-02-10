@@ -1202,27 +1202,24 @@ public:
 //////////////////////////////////////////////////////////////////////////
 // OPTIONS OPENIL
 //////////////////////////////////////////////////////////////////////////
-cMainMenuWidget_Text *gpOpenILText=NULL;
-
+cMainMenuWidget_Text *gpEnableOpenILText=NULL;
 class cMainMenuWidget_OpenIL : public cMainMenuWidget_Button
 {
 public:
 	cMainMenuWidget_OpenIL(cInit *apInit, const cVector3f &avPos, const tWString& asText,cVector2f avFontSize, eFontAlign aAlignment)
-		: cMainMenuWidget_Button(apInit,avPos,asText,eMainMenuState_LastEnum,avFontSize,aAlignment)
+								: cMainMenuWidget_Button(apInit,avPos,asText,eMainMenuState_LastEnum,avFontSize,aAlignment)
 	{
-		msTip = kTranslate("MainMenu", "EnableOpenIL");
+		msTip = kTranslate("MainMenu", "TipEnableOpenIL");
 	}
-
+	
 	void OnMouseDown(eMButton aButton)
 	{
 		mpInit->mbUseOpenIL = !mpInit->mbUseOpenIL;
-
-		gpOpenILText->msText = mpInit->mbUseOpenIL ?
+		gpEnableOpenILText->msText = mpInit->mbUseOpenIL ? 
 			kTranslate("MainMenu","On") : kTranslate("MainMenu","Off");
-
-		gbMustRestart = true;
 	}
 };
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -3661,10 +3658,16 @@ void cMainMenu::CreateWidgets()
 	// Options OpenIL
 	///////////////////////////////////
 	vPos = vTextStart;//cVector3f(400, 260, 40);
-	vPos.y += 29;
-	cMainMenuWidget *pWidgetOpenIL = hplNew( cMainMenuWidget_OpenIL, (mpInit,vPos,kTranslate("MainMenu","Use OpenIL:"),20,eFontAlign_Right) );
-	AddWidgetToState(eMainMenuState_OptionsOpenIL,pWidgetOpenIL); 
-	
+	AddWidgetToState(eMainMenuState_OptionsOpenIL,hplNew( cMainMenuWidget_Text,(mpInit,vPos,kTranslate("MainMenu","OpenIL"),25,eFontAlign_Center)) ); 
+
+	// TODO: Check the process to read from config files and init needed subsystems. Add OpenIL as one of those needed subsystems
+	//vPos.y += 42;
+	//cMainMenuWidget *pWidgetEnableOpenIL = hplNew( cMainMenuWidget_OpenIL,(mpInit,vPos,kTranslate("MainMenu","Enable OpenIL:"),20,eFontAlign_Right) );
+	//AddWidgetToState(eMainMenuState_OptionsOpenIL, pWidgetEnableOpenIL); 
+
+
+	vPos.y += 42;
+	AddWidgetToState(eMainMenuState_OptionsOpenIL,hplNew( cMainMenuWidget_GfxBack,(mpInit,vPos,kTranslate("MainMenu","Back"),23,eFontAlign_Center)) );
 }
 
 //-----------------------------------------------------------------------

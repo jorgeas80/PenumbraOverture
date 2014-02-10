@@ -136,10 +136,10 @@ public:
     int mlStreamUpdateFreq;
 	bool mbUseSoundHardware;
 	bool mbUseSoundThreading;
-	bool mbUseOpenIL;
 	int mlMaxMonoChannelsHint;
 	int mlMaxStereoChannelsHint;
 	tString msDeviceName;
+	bool mbUseOpenIL;
 
 	ePhysicsAccuracy mPhysicsAccuracy;
 	float mfPhysicsUpdatesPerSec;
