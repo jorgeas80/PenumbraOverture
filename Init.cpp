@@ -65,6 +65,14 @@
 // MUST include Last as Unix X11 header defined DestroyAll which blows up MapHandler.h class definition
 #include "impl/SDLGameSetup.h"
 
+
+// OpenIL includes
+#include "IL_Utils.h"
+#include "IL_EffectSource.h"
+#include "IL_LightSource.h"
+
+using namespace openil;
+
 //Global init...
 cInit* gpInit;
 
@@ -456,7 +464,7 @@ bool cInit::Init(tString asCommandLine)
 	mpGame->GetResources()->SetLanguageFile(msLanguageFile);
 
 	Log("Initializing "PRODUCT_NAME"\n  Version\t"PRODUCT_VERSION"\n  Date\t"PRODUCT_DATE"\n");
-	//////////////////////////////////////////////7
+	///////////////////////////////////////////////
 	// Check if computer supports game
 	if(CheckSupport(this)==false) return false;
 
@@ -652,6 +660,53 @@ bool cInit::Init(tString asCommandLine)
 	}
 
 	SetWindowCaption("Penumbra");
+
+
+	//////////////////////////////////////////////////////////
+	// Init OpenIL light engine
+	// This is a temporal hack until I figure out how to properly
+	// init the engine starting from a menu option read from a 
+	// configuration file. 
+	Log("Initializing OpenIL engine...\n");
+	int result = openil::initLightEngine ();
+	if (result != OK)
+	{
+		switch (result)
+		{
+		case DATABASERESPONSEEMPTY:
+			Log("database response empty\n");
+			break;
+
+		case NOTCONNECTTOSOCKET:
+			Log("Socket not response\n");
+			break;
+			
+		case JSONPARSERERROR:
+			Log("Json Parser error\n");
+			break;
+
+		case LAMPSNOTFOUND:
+			Log("Json response not containg list of lamps\n");
+			break;			
+
+		case PROFILENOTFOUND:
+			Log("Json response not containg list of profiles\n");
+			break;
+
+		case CONNECTFAIL:
+			Log("connect with server fail\n");
+			break;
+
+		case UPNPFAIL:
+			Log("connection with UPNP fail\n");
+			break;
+
+		default:
+			Log("unexpected fail\n");
+		}
+	}
+
+	Log("OK\n");
 	
 	return true;
 }
