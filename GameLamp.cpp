@@ -25,11 +25,6 @@
 #include "EffectHandler.h"
 #include "Inventory.h"
 
-#include "IL_Utils.h"
-#include "IL_LightSource.h"
-
-using namespace openil;
-
 //-----------------------------------------------------------------------
 
 //////////////////////////////////////////////////////////////////////////
@@ -139,16 +134,6 @@ void cEntityLoader_GameLamp::AfterLoad(TiXmlElement *apRootElem, const cMatrixf 
 	// Add to map handler
 	mpInit->mpMapHandler->AddGameEntity(pObject);
 
-	int result = openil::initLightEngine ();
-
-		openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource;
-		sourceLight->setLight(openil::IL_Color(255, 0, 0, 0));
-		sourceLight->setAmbientLight();
-		sourceLight->play();
-
-	Log("RED sent to light\n");
-
-	endLightEngine();
 }
 
 //-----------------------------------------------------------------------
