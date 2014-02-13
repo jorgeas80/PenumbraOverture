@@ -1214,9 +1214,11 @@ public:
 	
 	void OnMouseDown(eMButton aButton)
 	{
-		mpInit->mbUseOpenIL = !mpInit->mbUseOpenIL;
+		/*mpInit->mbUseOpenIL = !mpInit->mbUseOpenIL;
 		gpEnableOpenILText->msText = mpInit->mbUseOpenIL ? 
 			kTranslate("MainMenu","On") : kTranslate("MainMenu","Off");
+
+		gbMustRestart = true;*/
 	}
 };
 
@@ -3660,14 +3662,24 @@ void cMainMenu::CreateWidgets()
 	vPos = vTextStart;//cVector3f(400, 260, 40);
 	AddWidgetToState(eMainMenuState_OptionsOpenIL,hplNew( cMainMenuWidget_Text,(mpInit,vPos,kTranslate("MainMenu","OpenIL"),25,eFontAlign_Center)) ); 
 
-	// TODO: Check the process to read from config files and init needed subsystems. Add OpenIL as one of those needed subsystems
-	//vPos.y += 42;
-	//cMainMenuWidget *pWidgetEnableOpenIL = hplNew( cMainMenuWidget_OpenIL,(mpInit,vPos,kTranslate("MainMenu","Enable OpenIL:"),20,eFontAlign_Right) );
-	//AddWidgetToState(eMainMenuState_OptionsOpenIL, pWidgetEnableOpenIL); 
 
+	// TODO: Check the process to read from config files and init needed subsystems. Add OpenIL as one of those needed subsystems
+	vPos.y += 42;
+	cMainMenuWidget *pWidgetEnableOpenIL = hplNew( cMainMenuWidget_OpenIL,(mpInit,vPos,kTranslate("MainMenu","Enable OpenIL:"),20,eFontAlign_Right) );
+	AddWidgetToState(eMainMenuState_OptionsOpenIL, pWidgetEnableOpenIL); 
 
 	vPos.y += 42;
 	AddWidgetToState(eMainMenuState_OptionsOpenIL,hplNew( cMainMenuWidget_GfxBack,(mpInit,vPos,kTranslate("MainMenu","Back"),23,eFontAlign_Center)) );
+
+	//Text
+	vPos = cVector3f(vTextStart.x+12, vTextStart.y+42, vTextStart.z) + cVector3f(40,0,0);
+
+	sText = mpInit->mbUseOpenIL ? kTranslate("MainMenu","On") : kTranslate("MainMenu","Off");
+	cMainMenuWidget_Text *gpEnableOpenILText = hplNew( cMainMenuWidget_Text,(mpInit,vPos,sText,20,eFontAlign_Left) );
+	AddWidgetToState(eMainMenuState_OptionsOpenIL,gpEnableOpenILText); 
+	gpEnableOpenILText->SetExtraWidget(pWidgetEnableOpenIL);
+
+	vPos.y += 29;
 }
 
 //-----------------------------------------------------------------------

@@ -389,7 +389,7 @@ bool cInit::Init(tString asCommandLine)
 	//mlStreamBufferCount = mpConfig->GetInt("Sound", "StreamBufferCount", 4);
 	msDeviceName = mpConfig->GetString("Sound","DeviceName","NULL");
 
-	mbUseOpenIL = mpConfig->GetBool("OpenIL","Enabled",true);
+	mbUseOpenIL = mpConfig->GetBool("OpenIL","Enabled",false);
 
 	iGpuProgram::SetLogDebugInformation(true);
 	iResourceBase::SetLogCreateAndDelete(mbLogResources);
@@ -800,6 +800,8 @@ void cInit::Exit()
 	mpConfig->SetInt("Sound","MaxMonoChannelsHint",mlMaxMonoChannelsHint);
 	mpConfig->SetInt("Sound","MaxStereoChannelsHint",mlMaxStereoChannelsHint);
 	mpConfig->SetString("Sound","DeviceName",msDeviceName);
+
+	mpConfig->SetBool("OpenIL","Enabled", mbUseOpenIL);
 
 	
 	mpConfig->SetInt("Graphics","TextureSizeLevel",mpGame->GetResources()->GetMaterialManager()->GetTextureSizeLevel());
