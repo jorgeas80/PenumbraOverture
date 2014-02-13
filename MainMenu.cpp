@@ -1214,11 +1214,13 @@ public:
 	
 	void OnMouseDown(eMButton aButton)
 	{
-		/*mpInit->mbUseOpenIL = !mpInit->mbUseOpenIL;
-		gpEnableOpenILText->msText = mpInit->mbUseOpenIL ? 
+		mpInit->mbUseOpenIL = !mpInit->mbUseOpenIL;
+
+		gpEnableOpenILText->msText = mpInit->mbUseOpenIL ?
 			kTranslate("MainMenu","On") : kTranslate("MainMenu","Off");
 
-		gbMustRestart = true;*/
+		// This generates the message "you need to restart the game..." when you change this option. Not needed
+		//gbMustRestart = true;
 	}
 };
 
@@ -3675,7 +3677,7 @@ void cMainMenu::CreateWidgets()
 	vPos = cVector3f(vTextStart.x+12, vTextStart.y+42, vTextStart.z) + cVector3f(40,0,0);
 
 	sText = mpInit->mbUseOpenIL ? kTranslate("MainMenu","On") : kTranslate("MainMenu","Off");
-	cMainMenuWidget_Text *gpEnableOpenILText = hplNew( cMainMenuWidget_Text,(mpInit,vPos,sText,20,eFontAlign_Left) );
+	gpEnableOpenILText = hplNew( cMainMenuWidget_Text,(mpInit,vPos,sText,20,eFontAlign_Left) );
 	AddWidgetToState(eMainMenuState_OptionsOpenIL,gpEnableOpenILText); 
 	gpEnableOpenILText->SetExtraWidget(pWidgetEnableOpenIL);
 
