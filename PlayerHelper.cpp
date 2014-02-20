@@ -32,6 +32,12 @@
 #include "PlayerHands.h"
 #include "GameMusicHandler.h"
 
+#include "IL_Utils.h"
+#include "IL_LightSource.h"
+#include "IL_Color.h"
+
+using namespace openil;
+
 //////////////////////////////////////////////////////////////////////////
 // HIT GROUND CALLBACK
 //////////////////////////////////////////////////////////////////////////
@@ -1632,17 +1638,33 @@ void cPlayerGlowStick::SetActive(bool abX)
 
 	if(mbActive)
 	{
-		//Log("Setting the glowstick to TRUE\n");
+		Log("Setting the glowstick to TRUE\n");
 		mpInit->mpPlayerHands->SetCurrentModel(0,"Glowstick");
 		//pSoundHanlder->PlayGui("item_glowstick_on",false,1);
+
+		openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource;
+		sourceLight->setLight(openil::IL_Color(0, 255, 0, 0));
+		sourceLight->setAmbientLight();
+		sourceLight->play();
+				
+		// You can see the light flickering just with a crap like this. Obviously, I'm not doing it
+		Sleep(1000);
 	}
 	else if(mpInit->mpPlayerHands->GetCurrentModel(0) &&
 			mpInit->mpPlayerHands->GetCurrentModel(0)->msName == "Glowstick" &&
 			mpInit->mpPlayerHands->GetCurrentModel(0)->GetState() != eHudModelState_Unequip)
 	{
-		//Log("Setting the glowstick to FALSE\n");
+		Log("Setting the glowstick to FALSE\n");
 		mpInit->mpPlayerHands->SetCurrentModel(0,"");
 		//pSoundHanlder->PlayGui("item_glowstick_off",false,1);
+
+		openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource;
+		sourceLight->setLight(openil::IL_Color(0, 0, 0, 0));
+		sourceLight->setAmbientLight();
+		sourceLight->play();
+				
+		// You can see the light flickering just with a crap like this. Obviously, I'm not doing it
+		Sleep(1000);
 	}
 }
 

@@ -31,6 +31,12 @@
 
 #include "OALWrapper/OAL_Init.h"
 
+#include "IL_Utils.h"
+#include "IL_EffectSource.h"
+#include "IL_LightSource.h"
+
+using namespace openil;
+
 float gfMenuFadeAmount;
 bool gbMustRestart=false;
 
@@ -1221,6 +1227,71 @@ public:
 
 		// This generates the message "you need to restart the game..." when you change this option. Not needed
 		//gbMustRestart = true;
+
+
+		///////// ON
+		if (mpInit->mbUseOpenIL) {
+
+			Log("Initializing OpenIL engine...\n");
+			
+			// This creates instances of LightSource and EffectSource in openil namespace. Ready to be used
+			int result = openil::initLightEngine ();
+			if (result != OK)
+			{
+				switch (result)
+				{
+				case DATABASERESPONSEEMPTY:
+					Log("OPENIL: database response empty\n");
+					break;
+				case NOTCONNECTTOSOCKET:
+					Log("OPENIL: could not connect to lamps coordinator\n");
+					break;
+				case JSONPARSERERROR:
+					Log("OPENIL: error parsing json response from lamp coordinator\n");
+					break;
+				case LAMPSNOTFOUND:
+					Log("OPENIL: list of lamps not found in response from lamp coordinator\n");
+					break;
+				case PROFILENOTFOUND:
+					Log("OPENIL: list of profiles not found in response from lamp coordinator\n");
+					break;
+				case CONNECTFAIL:
+					Log("OPENIL: network connection problem\n");
+					break;
+				case UPNPFAIL:
+					Log("OPENIL: UPnP connection fail\n");
+					break;
+				default:
+					Log("OPENIL: undefined error\n");
+					break ;
+				}
+			}
+
+			else {
+				Log("OPENIL: Light engine started\n");
+
+				if (openil::isEnableLightEngine()) 
+					Log("OPENIL: IS enabled\n");
+				else
+					Log("OPENIL: IS NOT enabled\n");
+
+				// Red flick in the lamps
+				// Just works when debugging. Goes to fast!
+				//openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource;
+				//sourceLight->setLight(openil::IL_Color(255, 0, 0, 0));
+				//sourceLight->setAmbientLight();
+				//sourceLight->play();
+				
+				// You can see the light flickering just with a crap like this. Obviously, I'm not doing it
+				//Sleep(1000);
+			}
+
+		}
+
+		///////// OFF
+		else {
+			endLightEngine();
+		}
 	}
 };
 

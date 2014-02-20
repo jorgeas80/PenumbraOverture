@@ -38,6 +38,8 @@ int hplMain(const tString& asCommandLine)
 		return 1;
 	}
 
+	Log("Entering game run method");
+
 	pInit->Run();
 
 	pInit->Exit();
