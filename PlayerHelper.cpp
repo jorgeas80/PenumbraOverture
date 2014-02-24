@@ -1589,6 +1589,8 @@ cPlayerGlowStick::cPlayerGlowStick(cInit *apInit)
 	mpInit->mpPlayerHands->AddModelFromFile("hud_object_glowstick.hud");
 
 	Reset();
+
+	openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource();
 }
 
 //-----------------------------------------------------------------------
@@ -1642,7 +1644,9 @@ void cPlayerGlowStick::SetActive(bool abX)
 		mpInit->mpPlayerHands->SetCurrentModel(0,"Glowstick");
 		//pSoundHanlder->PlayGui("item_glowstick_on",false,1);
 
-		openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource;
+		openil::initLightEngine();
+		
+		openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource();
 		sourceLight->setLight(openil::IL_Color(0, 255, 0, 0));
 		sourceLight->setAmbientLight();
 		sourceLight->play();
@@ -1657,6 +1661,8 @@ void cPlayerGlowStick::SetActive(bool abX)
 		Log("Setting the glowstick to FALSE\n");
 		mpInit->mpPlayerHands->SetCurrentModel(0,"");
 		//pSoundHanlder->PlayGui("item_glowstick_off",false,1);
+
+		openil::initLightEngine();
 
 		openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource;
 		sourceLight->setLight(openil::IL_Color(0, 0, 0, 0));

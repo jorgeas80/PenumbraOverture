@@ -25,6 +25,12 @@ using namespace hpl;
 
 #include "GameTypes.h"
 
+#include "IL_Utils.h"
+#include "IL_LightSource.h"
+#include "IL_Color.h"
+
+using namespace openil;
+
 class cInit;
 class cPlayer;
 
@@ -362,6 +368,8 @@ private:
 	bool mbActive;
 
 	cInit *mpInit;
+
+	openil::IL_ref_ptr<IL_LightSource> sourceLight;
 };
 
 //---------------------------------------------
