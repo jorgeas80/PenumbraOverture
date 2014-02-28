@@ -32,11 +32,14 @@
 #include "PlayerHands.h"
 #include "GameMusicHandler.h"
 
+#include "tinythread.h"
+
 #include "IL_Utils.h"
 #include "IL_LightSource.h"
 #include "IL_Color.h"
 
 using namespace openil;
+using namespace tthread;
 
 //////////////////////////////////////////////////////////////////////////
 // HIT GROUND CALLBACK
@@ -1630,6 +1633,32 @@ void cPlayerGlowStick::Update(float afTimeStep)
 
 //-----------------------------------------------------------------------
 
+void SendWhiteToLamp(void * aArg)
+{
+	openil::initLightEngine();
+
+	openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource;
+	sourceLight->setLight(openil::IL_Color(0, 0, 0, 0));
+	sourceLight->setAmbientLight();
+	sourceLight->play();
+				
+	// You can see the light flickering just with a crap like this. Obviously, I'm not doing it
+	Sleep(1000);
+}
+
+void SendGreenToLamp(void * aArg)
+{
+	openil::initLightEngine();
+		
+	openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource();
+	sourceLight->setLight(openil::IL_Color(0, 255, 0, 0));
+	sourceLight->setAmbientLight();
+	
+	sourceLight->play();
+				
+	// You can see the light flickering just with a crap like this. Obviously, I'm not doing it
+	Sleep(1000);
+}
 
 void cPlayerGlowStick::SetActive(bool abX)
 {
@@ -1644,15 +1673,8 @@ void cPlayerGlowStick::SetActive(bool abX)
 		mpInit->mpPlayerHands->SetCurrentModel(0,"Glowstick");
 		//pSoundHanlder->PlayGui("item_glowstick_on",false,1);
 
-		openil::initLightEngine();
-		
-		openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource();
-		sourceLight->setLight(openil::IL_Color(0, 255, 0, 0));
-		sourceLight->setAmbientLight();
-		sourceLight->play();
-				
-		// You can see the light flickering just with a crap like this. Obviously, I'm not doing it
-		Sleep(1000);
+		thread t(SendGreenToLamp, 0);
+		t.join();
 	}
 	else if(mpInit->mpPlayerHands->GetCurrentModel(0) &&
 			mpInit->mpPlayerHands->GetCurrentModel(0)->msName == "Glowstick" &&
@@ -1662,15 +1684,8 @@ void cPlayerGlowStick::SetActive(bool abX)
 		mpInit->mpPlayerHands->SetCurrentModel(0,"");
 		//pSoundHanlder->PlayGui("item_glowstick_off",false,1);
 
-		openil::initLightEngine();
-
-		openil::IL_ref_ptr<IL_LightSource> sourceLight = new IL_LightSource;
-		sourceLight->setLight(openil::IL_Color(0, 0, 0, 0));
-		sourceLight->setAmbientLight();
-		sourceLight->play();
-				
-		// You can see the light flickering just with a crap like this. Obviously, I'm not doing it
-		Sleep(1000);
+		thread t(SendWhiteToLamp, 0);
+		t.join();
 	}
 }
 
