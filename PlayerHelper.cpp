@@ -1544,6 +1544,8 @@ void cPlayerFlashLight::SetActive(bool abX)
 
 		if(mpInit->mpPlayer->GetPower()>0) {
 			mspFlashLightSource->setLight(openil::IL_Color(255, 255, 255, 0));
+
+			// TODO: Not really an ambient light
 			mspFlashLightSource->setAmbientLight();
 			mspFlashLightSource->play();
 		}

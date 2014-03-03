@@ -47,6 +47,8 @@ cAreaLoader_GameArea::~cAreaLoader_GameArea()
 iEntity3D* cAreaLoader_GameArea::Load(const tString &asName, const cVector3f &avSize, 
 									const cMatrixf &a_mtxTransform,cWorld3D *apWorld)
 {
+	Log("Loading area %s\n", asName.c_str());
+
 	cGameArea *pArea = hplNew( cGameArea, (mpInit,asName) );
 
 	pArea->m_mtxOnLoadTransform = a_mtxTransform;
@@ -66,7 +68,7 @@ iEntity3D* cAreaLoader_GameArea::Load(const tString &asName, const cVector3f &av
 
 	mpInit->mpMapHandler->AddGameEntity(pArea);
 
-	//Log("Loaded area %s\n",asName.c_str());
+	Log("Loaded area %s\n",asName.c_str());
 	
 	//Return something else later perhaps.
 	return NULL;
