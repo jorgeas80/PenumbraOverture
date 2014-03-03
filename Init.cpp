@@ -422,10 +422,10 @@ bool cInit::Init(tString asCommandLine)
 	cCGProgram::SetVProfile(mpConfig->GetString("Graphics","ForceVP","AUTO"));
 
 	iLowLevelGameSetup *pSetUp = NULL;
-
+	
 	pSetUp = hplNew( cSDLGameSetup, () );
 	mpGame = hplNew( cGame, ( pSetUp,Vars) );
-    
+
 #ifdef  TIMELIMIT
 	CheckTimeLimit();
 #endif
