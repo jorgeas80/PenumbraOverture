@@ -340,6 +340,8 @@ private:
 
 	cVector3f mvStart;
 	cVector3f mvEnd;
+
+	openil::IL_ref_ptr<openil::IL_LightSource> mspFlashLightSource;
 };
 
 //---------------------------------------------

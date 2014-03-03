@@ -1299,6 +1299,8 @@ cPlayerFlashLight::cPlayerFlashLight(cInit *apInit)
 	
 	mpInit->mpPlayerHands->AddModelFromFile("hud_object_flashlight.hud");
 
+	mspFlashLightSource = new openil::IL_LightSource();
+
 	Reset();
 }
 
@@ -1307,6 +1309,7 @@ cPlayerFlashLight::cPlayerFlashLight(cInit *apInit)
 
 cPlayerFlashLight::~cPlayerFlashLight()
 {
+	// TODO: Delete the light source
 }
 
 //-----------------------------------------------------------------------
@@ -1538,6 +1541,12 @@ void cPlayerFlashLight::SetActive(bool abX)
 		mpInit->mpPlayerHands->SetCurrentModel(0,"Flashlight");
 		
 		//pSoundHanlder->PlayGui("item_flashlight_on",false,1);
+
+		if(mpInit->mpPlayer->GetPower()>0) {
+			mspFlashLightSource->setLight(openil::IL_Color(255, 255, 255, 0));
+			mspFlashLightSource->setAmbientLight();
+			mspFlashLightSource->play();
+		}
 	}
 	/////////////////////////////
 	//Not active
@@ -1551,6 +1560,10 @@ void cPlayerFlashLight::SetActive(bool abX)
 			pSoundHanlder->PlayGui("item_flashlight_nopower",false,1);
 		//else
 		//	pSoundHanlder->PlayGui("item_flashlight_off",false,1);
+
+		if(mpInit->mpPlayer->GetPower()>0) {
+			mspFlashLightSource->stop();
+		}
 	}
 }
 
@@ -1619,6 +1632,7 @@ void cPlayerGlowStick::OnWorldLoad()
 
 void cPlayerGlowStick::Destroy()
 {
+	// TODO: Delete the light source
 }
 
 //-----------------------------------------------------------------------
