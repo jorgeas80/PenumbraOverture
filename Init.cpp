@@ -654,18 +654,8 @@ bool cInit::Init(tString asCommandLine)
 	}
 
 
-	// This causes the game to crash at init...
-	/*
-	cLight3DListIterator lightIt = mpGame->GetScene()->GetWorld3D()->GetLightIterator();
-	while(lightIt.HasNext())
-	{
-		iLight3D *pLight = lightIt.Next();
-
-		Log("Light position once the world is created: %s\n", pLight->GetWorldPosition().ToString());
-	}
-	*/
-
 	SetWindowCaption("Penumbra");
+
 	
 	return true;
 }
