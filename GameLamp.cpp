@@ -500,7 +500,7 @@ void cGameLamp::Init()
 	{
 		mvLightColors.push_back(mvLights[i]->GetDiffuseColor());
 
-		//Log("Setting lamp %s color to: %s\n",msName.c_str(),mvLights[i]->GetDiffuseColor().ToString().c_str());
+		Log("Setting lamp %s color to: %s\n",msName.c_str(),mvLights[i]->GetDiffuseColor().ToString().c_str());
 
 		mvLights[i]->SetFlickerActive(mbFlickering);
 		if(mbFlickering)

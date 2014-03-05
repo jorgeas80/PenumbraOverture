@@ -511,16 +511,21 @@ bool cMapHandler::Load(const tString &asFile,const tString& asStartPos)
 
 	mpInit->mpPlayer->SetStartPos(asStartPos);
 
+	Log("Player starts at %s\n", asStartPos.c_str());
+
 	Log("-------- Logging lights ----------------\n");
+	Log("WORLD SIZE: %s\n", mpInit->mpGame->GetScene()->GetWorld3D()->GetWorldSize().ToString());
 	cLight3DListIterator lightIt = mpInit->mpGame->GetScene()->GetWorld3D()->GetLightIterator();
 	while(lightIt.HasNext()) {
 		iLight3D *pLight = lightIt.Next();
 
-		Log("Light world position once the map has been loaded: %s\n", pLight->GetWorldPosition().ToString());
+		Log("Light world %s position once the map has been loaded: %s\n", pLight->GetName().c_str(), pLight->GetWorldPosition().ToString());
 		Log("Light local position once the map has been loaded: %s\n", pLight->GetLocalPosition().ToString());
 		Log("Light dest color: %s\n", pLight->GetDestColor().ToString());
 		Log("Light diffuse color: %s\n", pLight->GetDiffuseColor().ToString());
 
+			
+		/*
 		openil::IL_ref_ptr<openil::IL_LightSource> mapLight = new openil::IL_LightSource();
 
 		cColor lightColor = pLight->GetDiffuseColor();
@@ -552,7 +557,7 @@ bool cMapHandler::Load(const tString &asFile,const tString& asStartPos)
 
 		mapLight->setAmbientLight();
 		mapLight->play();
-		
+		*/
 	}
 
 	//Run global script
