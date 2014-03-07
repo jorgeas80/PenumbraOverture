@@ -44,6 +44,8 @@
 
 #include "IL_LightSource.h"
 
+static openil::IL_ref_ptr<openil::IL_LightSource> mapLight = new openil::IL_LightSource();
+
 //////////////////////////////////////////////////////////////////////////
 // WORLD CACHE
 //////////////////////////////////////////////////////////////////////////
@@ -559,6 +561,21 @@ bool cMapHandler::Load(const tString &asFile,const tString& asStartPos)
 		mapLight->play();
 		*/
 	}
+
+	// TESTING: CREATE OPENIL LIGHT AT (0, 0, 0)
+	/*
+	openil::IL_Color openILLightColor;
+	openILLightColor.setColor(255, 0, 0, 0);
+	mapLight->setLight(openILLightColor);
+
+	float radius = 1000;
+	mapLight->setPointLight(openil::IL_Vector3D(0, 0, 0), radius);
+
+	//mapLight->setAmbientLight();
+
+	mapLight->play();
+	*/
+
 
 	//Run global script
 	if(mpInit->mpGlobalScript)
