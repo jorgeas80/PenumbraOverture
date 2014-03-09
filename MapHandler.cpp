@@ -234,7 +234,7 @@ cEffectLightFlash::cEffectLightFlash(cInit *apInit,const cVector3f& avPos,
 	mfRadius = afRadius;
 	mfNegTime = afNegTime;
 	
-	//Log("Fade to %s : %f in time %f\n",aColor.ToString().c_str(),mfRadius,afAddTime);
+	Log("CREATING LIGHT FLASH. Fade to %s : %f in time %f\n",aColor.ToString().c_str(),mfRadius,afAddTime);
 	mpLight->FadeTo(aColor,mfRadius,afAddTime);
 
 	mbIsDying = false;
@@ -345,6 +345,9 @@ bool cMapHandler::Load(const tString &asFile,const tString& asStartPos)
 #endif
 	
 	unsigned long lStartTime = mpInit->mpGame->GetSystem()->GetLowLevel()->GetTime();
+
+
+	Log("------------- LOADING THE MAP %s\n", sMapName.c_str());
 
 	if(sMapName != msCurrentMap)
 	{
@@ -516,13 +519,15 @@ bool cMapHandler::Load(const tString &asFile,const tString& asStartPos)
 	Log("Player starts at %s\n", asStartPos.c_str());
 
 	Log("-------- Logging lights ----------------\n");
-	Log("WORLD SIZE: %s\n", mpInit->mpGame->GetScene()->GetWorld3D()->GetWorldSize().ToString());
+	Log("WORLD SIZE MIN: %s\n", mpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld()->GetWorldSizeMin().ToString());
+	Log("WORLD SIZE MAX: %s\n", mpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld()->GetWorldSizeMax().ToString());
 	cLight3DListIterator lightIt = mpInit->mpGame->GetScene()->GetWorld3D()->GetLightIterator();
 	while(lightIt.HasNext()) {
 		iLight3D *pLight = lightIt.Next();
 
 		Log("Light world %s position once the map has been loaded: %s\n", pLight->GetName().c_str(), pLight->GetWorldPosition().ToString());
 		Log("Light local position once the map has been loaded: %s\n", pLight->GetLocalPosition().ToString());
+		Log("Light OpenIL position: %s\n", pLight->GetOpenILCoords(pLight->GetWorldPosition()).ToString());
 		Log("Light dest color: %s\n", pLight->GetDestColor().ToString());
 		Log("Light diffuse color: %s\n", pLight->GetDiffuseColor().ToString());
 
@@ -561,20 +566,6 @@ bool cMapHandler::Load(const tString &asFile,const tString& asStartPos)
 		mapLight->play();
 		*/
 	}
-
-	// TESTING: CREATE OPENIL LIGHT AT (0, 0, 0)
-	/*
-	openil::IL_Color openILLightColor;
-	openILLightColor.setColor(255, 0, 0, 0);
-	mapLight->setLight(openILLightColor);
-
-	float radius = 1000;
-	mapLight->setPointLight(openil::IL_Vector3D(0, 0, 0), radius);
-
-	//mapLight->setAmbientLight();
-
-	mapLight->play();
-	*/
 
 
 	//Run global script
