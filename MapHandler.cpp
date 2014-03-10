@@ -530,41 +530,6 @@ bool cMapHandler::Load(const tString &asFile,const tString& asStartPos)
 		Log("Light OpenIL position: %s\n", pLight->GetOpenILCoords(pLight->GetWorldPosition()).ToString());
 		Log("Light dest color: %s\n", pLight->GetDestColor().ToString());
 		Log("Light diffuse color: %s\n", pLight->GetDiffuseColor().ToString());
-
-			
-		/*
-		openil::IL_ref_ptr<openil::IL_LightSource> mapLight = new openil::IL_LightSource();
-
-		cColor lightColor = pLight->GetDiffuseColor();
-		openil::IL_Color openILLightColor;
-		openILLightColor.setColorf(lightColor.r,lightColor.g, lightColor.b, 0);
-
-		mapLight->setLight(openILLightColor);
-		mapLight->setPriorityLevel(1);
-
-
-		if (pLight->GetLightType() == eLight3DType_Point) {
-			Log("Light type: POINT\n");
-
-			cVector3f lightPos = pLight->GetWorldPosition();
-
-			//float radius = 100;
-			//mapLight->setPointLight(openil::IL_Vector3D(lightPos.x, lightPos.y, lightPos.z), radius);
-		}
-
-		else if (pLight->GetLightType() == eLight3DType_Spot) {
-			Log("Light type: SPOT\n");
-
-			cVector3f lightPos = pLight->GetWorldPosition();
-		}
-
-		else
-			Log("Light type: UNKNOWN\n");
-
-
-		mapLight->setAmbientLight();
-		mapLight->play();
-		*/
 	}
 
 

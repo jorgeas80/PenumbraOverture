@@ -172,6 +172,10 @@ cGameLamp::cGameLamp(cInit *apInit,const tString& asName) : iGameEntity(apInit,a
 	mpSubMesh = NULL;
 
 	mbSaveLights = false;
+
+	mOpenILLight = new openil::IL_LightSource();
+
+	Log("Game lamp %s created\n", asName.c_str());
 }
 
 //-----------------------------------------------------------------------
@@ -193,6 +197,8 @@ cGameLamp::~cGameLamp(void)
 
 void cGameLamp::OnPlayerPick()
 {
+	Log("cGameLamp::OnPlayerPick --> %s\n", msName.c_str());
+
 	float fPickedDist = mpInit->mpPlayer->GetPickedDist();
 	if(	fPickedDist < mfMaxInteractDist)
 	{
@@ -221,6 +227,8 @@ void cGameLamp::OnPlayerPick()
 
 void cGameLamp::OnPlayerInteract()
 {
+	Log("cGameLamp::OnPlayerInteract -->%s, at distance %f\n", msName.c_str(), mpInit->mpPlayer->GetPickedDist());
+
 	if(mpInit->mpPlayer->GetPickedDist() < mfMaxInteractDist)
 	{
 		bool bInteracted=false;
@@ -255,6 +263,8 @@ void cGameLamp::OnPlayerInteract()
 
 bool cGameLamp::OnUseItem(cInventoryItem *apItem)
 {
+	Log("cGameLamp::OnUseItem -->%s\n", msName.c_str());
+
 	if(mbLit && mbInteractOff && msOffItem==apItem->GetName())
 	{
 		SetLit(false,true);
@@ -273,6 +283,8 @@ bool cGameLamp::OnUseItem(cInventoryItem *apItem)
 
 void cGameLamp::Update(float afTimeStep)
 {
+	Log("cGameLamp::Update -->%s\n", msName.c_str());
+
 	////////////////////////////////
 	//Update alpha
 	if(mbFlickering && mbLit)
@@ -353,6 +365,8 @@ void cGameLamp::Update(float afTimeStep)
 
 void cGameLamp::SetLit(bool abX, bool abFade)
 {
+	Log("cGameLamp::SetLit --> %s\n", msName.c_str());
+
 	if(mbLit == abX) return;
 
 	mbLit = abX;
@@ -363,6 +377,7 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 	//Turn On
 	if(mbLit)
 	{
+		Log("cGameLamp::SetLit --> %s. TURN ON\n", msName.c_str());
 		for(size_t i=0; i<mvLights.size(); ++i) 
 		{
 			mvLights[i]->SetVisible(true);
@@ -376,6 +391,38 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 				mvLights[i]->SetDiffuseColor(mvLightColors[i]);
 				mvLights[i]->SetFlickerActive(mbFlickering);
 			}
+
+
+			///////// THOSE CALCULATIONS MAY BE NECESSARY TO CALCULATE THE POSITION WHERE WE WANT THE OPENIL LIGHT
+			cCamera3D *pCam = mpInit->mpPlayer->GetCamera();
+
+			// Distance from light to user
+			cVector3f vToLight = mvLights[i]->GetLightPosition() - mpInit->mpPlayer->GetCharacterBody()->GetPosition();
+			float fSqrDist = vToLight.SqrLength();
+			vToLight.Normalise();
+
+			// User is affected by Light: play
+			if (fSqrDist < mvLights[i]->GetFarAttenuation()) {
+			}
+			////////////////////////////////////////////////////////////////////
+
+			
+			// THIS IS TEMPORARY. THE PLAY SHOULD BE EXECUTED INSIDE EACH LIGHT ELEMENT
+			openil::IL_Color color;
+			color.setColorf(mvLightColors[i].r, mvLightColors[i].g, mvLightColors[i].b, 0);
+			mOpenILLight->setLight(color);
+			
+			// We assume 100m as maximum radius for point light
+			float radius = (mvLights[i]->GetFarAttenuation() * 1000) / 100;
+
+			// Not really an ambient light
+			//mOpenILLight->setAmbientLight();
+
+			mOpenILLight->setPointLight(openil::IL_Vector3D(0, 0, 0), radius);
+			mOpenILLight->play();
+
+			Log("OpenIL point light with radius %f created (far attenuation was %f)\n", radius, mvLights[i]->GetFarAttenuation());
+
 		}
 		for(size_t i=0; i<mvParticleSystems.size(); ++i) 
 		{
@@ -385,10 +432,10 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 										1,mvParticleSystemNames[i].m_mtxTransform);
 			mpMeshEntity->AddChild(mvParticleSystems[i]);
 			
-			/*Log("Creating ps %s at pos (%s) meshpos: (%s)\n",
+			Log("Creating ps %s at pos (%s) meshpos: (%s)\n",
 				mvParticleSystems[i]->GetName().c_str(),
 				mvParticleSystems[i]->GetWorldPosition().ToString().c_str(),
-				mpMeshEntity->GetWorldPosition().ToString().c_str());*/
+				mpMeshEntity->GetWorldPosition().ToString().c_str());
 			
 			mvParticleSystems[i]->SetTransformUpdated(true);
 			
@@ -428,6 +475,7 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 	//Turn Off
 	else
 	{
+		Log("cGameLamp::SetLit --> %s. TURN OFF\n", msName.c_str());
 		for(size_t i=0; i<mvLights.size(); ++i) 
 		{
 			mvLights[i]->SetFlickerActive(false);
@@ -438,6 +486,9 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 				mvLights[i]->SetVisible(false);
 				mvLights[i]->SetDiffuseColor(cColor(0,0));
 			}
+
+			// THIS IS TEMPORAL. IT SHOULD BE EXECUTED INSIDE EACH LIGHT OBJECT
+			mOpenILLight->stop();
 		}
 		for(size_t i=0; i<mvParticleSystems.size(); ++i) 
 		{
@@ -482,6 +533,8 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 
 void cGameLamp::SetFlicker(bool abX)
 {
+	Log("cGameLamp::SetFlicker --> %s\n", msName.c_str());
+
 	mbFlickering = abX;
 	for(size_t i=0; i<mvLights.size(); ++i) 
 	{
@@ -494,6 +547,8 @@ void cGameLamp::SetFlicker(bool abX)
 
 void cGameLamp::Init()
 {	
+	Log("cGameLamp::Init --> %s\n", msName.c_str());
+
 	//////////////////////
 	//Set up lights
 	for(size_t i=0; i<mvLights.size(); ++i) 
