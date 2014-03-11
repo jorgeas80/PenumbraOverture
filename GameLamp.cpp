@@ -297,6 +297,8 @@ void cGameLamp::Update(float afTimeStep)
 				mvLights[i]->SetFlickerActive(true);
 				SetUpFlicker((int)i);
 			}
+
+			// Play lights in openil
 		}
 	}
 
@@ -392,6 +394,38 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 				mvLights[i]->SetFlickerActive(mbFlickering);
 			}
 
+			// Play openil light, if needed
+			if (mvLights[i]->OpenILLightNeedsUpdate()) {
+
+				openil::IL_ref_ptr<openil::IL_LightSource> spOpenILLightSource = mvLights[i]->GetOpenILLightSource();
+
+				// Distance from light to user
+				cVector3f vToLight = mvLights[i]->GetLightPosition() - mpInit->mpPlayer->GetCharacterBody()->GetPosition();
+				float fSqrDist = vToLight.SqrLength();
+				vToLight.Normalise();
+
+				// If I am close enough, I'm affected by the light. So, play it in my lamp!
+				if (fSqrDist <= mvLights[i]->GetFarAttenuation()) {
+
+					float radius = mvLights[i]->GetOpenILRadius(mvLights[i]->GetFarAttenuation());
+
+					if (mvLights[i]->GetLightType() == eLight3DType_Spot) {
+						// TODO: Calculate spot values (direction)
+						spOpenILLightSource->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), radius);
+					}
+
+					else if (mvLights[i]->GetLightType() == eLight3DType_Point) {
+
+						// TODO: Define all the stuff for spot light
+						//Light3DSpot * pSpotLight = (Light3DSpot *)(mvLights[i]);
+						spOpenILLightSource->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), radius);
+					}
+
+					spOpenILLightSource->play();
+				}
+			}
+
+			//////////////////////////////////////////// OPENIL STUFF (TO BE DELETED)
 
 			///////// THOSE CALCULATIONS MAY BE NECESSARY TO CALCULATE THE POSITION WHERE WE WANT THE OPENIL LIGHT
 			cCamera3D *pCam = mpInit->mpPlayer->GetCamera();
@@ -422,6 +456,8 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 			mOpenILLight->play();
 
 			Log("OpenIL point light with radius %f created (far attenuation was %f)\n", radius, mvLights[i]->GetFarAttenuation());
+
+			//////////////////////////////////////////// OPENIL STUFF (TO BE DELETED)
 
 		}
 		for(size_t i=0; i<mvParticleSystems.size(); ++i) 
