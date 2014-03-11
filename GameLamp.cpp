@@ -407,11 +407,13 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 				// If I am close enough, I'm affected by the light. So, play it in my lamp!
 				if (fSqrDist <= mvLights[i]->GetFarAttenuation()) {
 
-					float radius = mvLights[i]->GetOpenILRadius(mvLights[i]->GetFarAttenuation());
+					float radius = openil::GetOpenILRadius(mvLights[i]->GetFarAttenuation(), 0, 100.0f);
 
 					if (mvLights[i]->GetLightType() == eLight3DType_Spot) {
 						// TODO: Calculate spot values (direction)
 						spOpenILLightSource->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), radius);
+
+						Log("OpenIL point light with radius %f created (far attenuation was %f)\n", radius, mvLights[i]->GetFarAttenuation());
 					}
 
 					else if (mvLights[i]->GetLightType() == eLight3DType_Point) {
@@ -419,45 +421,17 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 						// TODO: Define all the stuff for spot light
 						//Light3DSpot * pSpotLight = (Light3DSpot *)(mvLights[i]);
 						spOpenILLightSource->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), radius);
+
+						Log("OpenIL point light with radius %f created (far attenuation was %f)\n", radius, mvLights[i]->GetFarAttenuation());
 					}
 
 					spOpenILLightSource->play();
 				}
 			}
 
-			//////////////////////////////////////////// OPENIL STUFF (TO BE DELETED)
-
-			///////// THOSE CALCULATIONS MAY BE NECESSARY TO CALCULATE THE POSITION WHERE WE WANT THE OPENIL LIGHT
-			cCamera3D *pCam = mpInit->mpPlayer->GetCamera();
-
-			// Distance from light to user
-			cVector3f vToLight = mvLights[i]->GetLightPosition() - mpInit->mpPlayer->GetCharacterBody()->GetPosition();
-			float fSqrDist = vToLight.SqrLength();
-			vToLight.Normalise();
-
-			// User is affected by Light: play
-			if (fSqrDist < mvLights[i]->GetFarAttenuation()) {
+			else {
+				Log("No need to update game lamp %s\n", msName.c_str());
 			}
-			////////////////////////////////////////////////////////////////////
-
-			
-			// THIS IS TEMPORARY. THE PLAY SHOULD BE EXECUTED INSIDE EACH LIGHT ELEMENT
-			openil::IL_Color color;
-			color.setColorf(mvLightColors[i].r, mvLightColors[i].g, mvLightColors[i].b, 0);
-			mOpenILLight->setLight(color);
-			
-			// We assume 100m as maximum radius for point light
-			float radius = (mvLights[i]->GetFarAttenuation() * 1000) / 100;
-
-			// Not really an ambient light
-			//mOpenILLight->setAmbientLight();
-
-			mOpenILLight->setPointLight(openil::IL_Vector3D(0, 0, 0), radius);
-			mOpenILLight->play();
-
-			Log("OpenIL point light with radius %f created (far attenuation was %f)\n", radius, mvLights[i]->GetFarAttenuation());
-
-			//////////////////////////////////////////// OPENIL STUFF (TO BE DELETED)
 
 		}
 		for(size_t i=0; i<mvParticleSystems.size(); ++i) 
