@@ -607,19 +607,29 @@ void iGameEntity::OnUpdate(float afTimeStep)
 					// to do the range change
 					float fOpenILRadius = openil::GetOpenILRadius(pLight->GetFarAttenuation(), 0, 100.0f);
 
-					if (pLight->GetLightType() == eLight3DType_Spot) {
-						// TODO: Calculate spot values (direction)
+					if (pLight->GetLightType() == eLight3DType_Point) {
+						
 						pLight->GetOpenILLightSource()->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), fOpenILRadius);
 
 						Log("OpenIL point light with radius %f created\n", fOpenILRadius);
 					}
 					
-					else if (mvLights[i]->GetLightType() == eLight3DType_Point) {
-					
-						// TODO: Calculate position vector of spot light (it probably comes from view matrix)
-						pLight->GetOpenILLightSource()->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), fOpenILRadius);
+					else if (mvLights[i]->GetLightType() == eLight3DType_Spot) { 
 
-						Log("OpenIL spot light with radius %f created\n", fOpenILRadius);
+						//pLight->GetOpenILLightSource()->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), fOpenILRadius);
+
+						// Check dynamic_cast here http://www.cplusplus.com/doc/tutorial/typecasting/
+						cLight3DSpot * pSpotLight = dynamic_cast<cLight3DSpot*>(mvLights[i]);
+
+						// TODO: Is this the right way to calculate the spot direction?
+						// I did it following this http://gamedev.stackexchange.com/questions/71630/derive-direction-in-which-a-spot-light-emites-its-light-from-a-projection-matrix
+						cVector3f vDefaultPos(0, 0, -1);
+						cVector3f vLightPos = cMath::MatrixMul(pSpotLight->GetViewMatrix(), vDefaultPos);
+
+						pLight->GetOpenILLightSource()->setSpotLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), 
+							fOpenILRadius, openil::IL_Vector3D(vLightPos.x, vLightPos.y, vLightPos.z), pSpotLight->GetFOV());
+
+						Log("OpenIL spot light with radius %f, direction %s and FOV %f created\n", fOpenILRadius, vLightPos.ToString(), pSpotLight->GetFOV());
 					}
 
 					pLight->GetOpenILLightSource()->play();
