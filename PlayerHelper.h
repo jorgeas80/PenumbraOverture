@@ -405,6 +405,8 @@ private:
 	float mfLightPulseAdd;
 	
 	cInit *mpInit;
+
+	openil::IL_ref_ptr<openil::IL_LightSource> mspFlareSource;
 };
 
 //---------------------------------------------

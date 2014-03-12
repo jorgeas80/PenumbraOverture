@@ -1699,6 +1699,8 @@ cPlayerFlare::cPlayerFlare(cInit *apInit)
 	mpLight =NULL;
 
 	Reset();
+
+	mspFlareSource = new openil::IL_LightSource();
 }
 
 //-----------------------------------------------------------------------
@@ -1818,6 +1820,10 @@ void cPlayerFlare::SetActive(bool abX)
 		
 		mpModel = mpInit->mpPlayerHands->GetModel("Flare");
 		mpLight = NULL;
+
+		mspFlareSource->setLight(openil::IL_Color(255, 0, 0, 0));
+		mspFlareSource->setAmbientLight();
+		mspFlareSource->play();
 	}
 	else
 	{
@@ -1829,6 +1835,10 @@ void cPlayerFlare::SetActive(bool abX)
 		{
 			mpInit->mpPlayerHands->SetCurrentModel(0,"");
 		}
+
+		
+		mspFlareSource->stop();
+	
 
 		///////////////////////////////
 		//Create entity
