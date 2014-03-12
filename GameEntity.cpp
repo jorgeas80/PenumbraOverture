@@ -577,7 +577,64 @@ void iGameEntity::OnUpdate(float afTimeStep)
 {
 	if(mbActive==false) return;
 
-	Log("iGameEntity::OnUpdate: %s. Type: %s\n", msName.c_str(), GetGameTypeName(mType));
+	/////////////////////////////////////////////
+	/// OpenIL stuff
+	if (GetLightNum() > 0) {
+		for(size_t i=0; i<mvLights.size(); ++i) {
+
+			iLight3D * pLight = mvLights[i];
+
+			float fDist = 
+					cMath::Vector3Dist(mpInit->mpPlayer->GetCamera()->GetPosition(), pLight->GetLightPosition());
+
+
+			// TURN ON lamp
+			// TODO: Is GetFarAttenuation the right method?
+			if (fDist <= pLight->GetFarAttenuation() && pLight->IsVisible() && pLight->IsActive()) {
+
+				// Position where the OpenIL LightSource will be created
+				cVector3f vPlayerPos = mpInit->mpPlayer->GetCamera()->GetPosition();
+				cVector3f vLightPos = pLight->GetLightPosition();
+				cVector3f vToLight = vPlayerPos - vLightPos;
+
+				Log("Player position: %s\n", vPlayerPos.ToString());
+				Log("Light position: %s\n", vLightPos.ToString());
+				Log("Position to create the light: %s\n", vToLight.ToString());
+
+				// The lamp is already lit on
+				if (!pLight->GetOpenILLightSource()->isEnabled()) {
+					// TODO: A light attenuation really goes from 0 to inf, but 100 meters looks like a good-enough maximum
+					// to do the range change
+					float fOpenILRadius = openil::GetOpenILRadius(pLight->GetFarAttenuation(), 0, 100.0f);
+
+					if (pLight->GetLightType() == eLight3DType_Spot) {
+						// TODO: Calculate spot values (direction)
+						pLight->GetOpenILLightSource()->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), fOpenILRadius);
+
+						Log("OpenIL point light with radius %f created\n", fOpenILRadius);
+					}
+					
+					else if (mvLights[i]->GetLightType() == eLight3DType_Point) {
+					
+						// TODO: Calculate position vector of spot light (it probably comes from view matrix)
+						pLight->GetOpenILLightSource()->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), fOpenILRadius);
+
+						Log("OpenIL spot light with radius %f created\n", fOpenILRadius);
+					}
+
+					pLight->GetOpenILLightSource()->play();
+				}
+			}
+
+
+			// TURN OFF
+			else {
+				pLight->GetOpenILLightSource()->stop();
+			}
+		}
+	
+	}
+
 
 	////////////////////////////////////////////
 	/// Script Collide test stuff

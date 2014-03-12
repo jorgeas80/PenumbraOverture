@@ -393,46 +393,6 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 				mvLights[i]->SetDiffuseColor(mvLightColors[i]);
 				mvLights[i]->SetFlickerActive(mbFlickering);
 			}
-
-			// Play openil light, if needed
-			if (mvLights[i]->OpenILLightNeedsUpdate()) {
-
-				openil::IL_ref_ptr<openil::IL_LightSource> spOpenILLightSource = mvLights[i]->GetOpenILLightSource();
-
-				// Distance from light to user
-				cVector3f vToLight = mvLights[i]->GetLightPosition() - mpInit->mpPlayer->GetCharacterBody()->GetPosition();
-				float fSqrDist = vToLight.SqrLength();
-				vToLight.Normalise();
-
-				// If I am close enough, I'm affected by the light. So, play it in my lamp!
-				if (fSqrDist <= mvLights[i]->GetFarAttenuation()) {
-
-					float radius = openil::GetOpenILRadius(mvLights[i]->GetFarAttenuation(), 0, 100.0f);
-
-					if (mvLights[i]->GetLightType() == eLight3DType_Spot) {
-						// TODO: Calculate spot values (direction)
-						spOpenILLightSource->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), radius);
-
-						Log("OpenIL point light with radius %f created (far attenuation was %f)\n", radius, mvLights[i]->GetFarAttenuation());
-					}
-
-					else if (mvLights[i]->GetLightType() == eLight3DType_Point) {
-
-						// TODO: Define all the stuff for spot light
-						//Light3DSpot * pSpotLight = (Light3DSpot *)(mvLights[i]);
-						spOpenILLightSource->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), radius);
-
-						Log("OpenIL point light with radius %f created (far attenuation was %f)\n", radius, mvLights[i]->GetFarAttenuation());
-					}
-
-					spOpenILLightSource->play();
-				}
-			}
-
-			else {
-				Log("No need to update game lamp %s\n", msName.c_str());
-			}
-
 		}
 		for(size_t i=0; i<mvParticleSystems.size(); ++i) 
 		{
@@ -496,9 +456,6 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 				mvLights[i]->SetVisible(false);
 				mvLights[i]->SetDiffuseColor(cColor(0,0));
 			}
-
-			// THIS IS TEMPORAL. IT SHOULD BE EXECUTED INSIDE EACH LIGHT OBJECT
-			mOpenILLight->stop();
 		}
 		for(size_t i=0; i<mvParticleSystems.size(); ++i) 
 		{
@@ -535,6 +492,8 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 	{
 		tString sBool = mbLit ? "true" : "false";
 		tString sCommand = msLitChangeCallback + "("+sBool+")";
+
+		Log("cGameLamp::SetLit --> GameLamp callback: %s\n", sCommand.c_str());
 		mpInit->RunScriptCommand(sCommand);
 	}
 }
