@@ -32,6 +32,11 @@
 #include "PlayerHands.h"
 #include "GameMusicHandler.h"
 
+#include "tinythread.h"
+
+using namespace tthread;
+
+
 //////////////////////////////////////////////////////////////////////////
 // HIT GROUND CALLBACK
 //////////////////////////////////////////////////////////////////////////
@@ -1294,6 +1299,8 @@ cPlayerFlashLight::cPlayerFlashLight(cInit *apInit)
 	
 	mpInit->mpPlayerHands->AddModelFromFile("hud_object_flashlight.hud");
 
+	mspFlashLightSource = new openil::IL_LightSource();
+
 	Reset();
 }
 
@@ -1302,6 +1309,7 @@ cPlayerFlashLight::cPlayerFlashLight(cInit *apInit)
 
 cPlayerFlashLight::~cPlayerFlashLight()
 {
+	// TODO: Delete the light source
 }
 
 //-----------------------------------------------------------------------
@@ -1533,6 +1541,14 @@ void cPlayerFlashLight::SetActive(bool abX)
 		mpInit->mpPlayerHands->SetCurrentModel(0,"Flashlight");
 		
 		//pSoundHanlder->PlayGui("item_flashlight_on",false,1);
+
+		if(mpInit->mpPlayer->GetPower()>0) {
+			mspFlashLightSource->setLight(openil::IL_Color(255, 255, 255, 0));
+
+			// TODO: Not really an ambient light
+			mspFlashLightSource->setAmbientLight();
+			mspFlashLightSource->play();
+		}
 	}
 	/////////////////////////////
 	//Not active
@@ -1546,6 +1562,10 @@ void cPlayerFlashLight::SetActive(bool abX)
 			pSoundHanlder->PlayGui("item_flashlight_nopower",false,1);
 		//else
 		//	pSoundHanlder->PlayGui("item_flashlight_off",false,1);
+
+		if(mpInit->mpPlayer->GetPower()>0) {
+			mspFlashLightSource->stop();
+		}
 	}
 }
 
@@ -1582,6 +1602,8 @@ cPlayerGlowStick::cPlayerGlowStick(cInit *apInit)
 
 	mpInit->mpPlayerHands->AddModelFromFile("hud_object_glowstick.hud");
 
+	mspGlowStickSource = new openil::IL_LightSource();
+
 	Reset();
 }
 
@@ -1590,6 +1612,7 @@ cPlayerGlowStick::cPlayerGlowStick(cInit *apInit)
 
 cPlayerGlowStick::~cPlayerGlowStick()
 {
+	// TODO: Delete OpenIL lightsource	
 }
 
 //-----------------------------------------------------------------------
@@ -1611,6 +1634,7 @@ void cPlayerGlowStick::OnWorldLoad()
 
 void cPlayerGlowStick::Destroy()
 {
+	// TODO: Delete the light source
 }
 
 //-----------------------------------------------------------------------
@@ -1632,17 +1656,23 @@ void cPlayerGlowStick::SetActive(bool abX)
 
 	if(mbActive)
 	{
-		//Log("Setting the glowstick to TRUE\n");
+		Log("Setting the glowstick to TRUE\n");
 		mpInit->mpPlayerHands->SetCurrentModel(0,"Glowstick");
 		//pSoundHanlder->PlayGui("item_glowstick_on",false,1);
+
+		mspGlowStickSource->setLight(openil::IL_Color(0, 255, 0, 0));
+		mspGlowStickSource->setAmbientLight();
+		mspGlowStickSource->play();
 	}
 	else if(mpInit->mpPlayerHands->GetCurrentModel(0) &&
 			mpInit->mpPlayerHands->GetCurrentModel(0)->msName == "Glowstick" &&
 			mpInit->mpPlayerHands->GetCurrentModel(0)->GetState() != eHudModelState_Unequip)
 	{
-		//Log("Setting the glowstick to FALSE\n");
+		Log("Setting the glowstick to FALSE\n");
 		mpInit->mpPlayerHands->SetCurrentModel(0,"");
 		//pSoundHanlder->PlayGui("item_glowstick_off",false,1);
+
+		mspGlowStickSource->stop();
 	}
 }
 
@@ -1669,6 +1699,8 @@ cPlayerFlare::cPlayerFlare(cInit *apInit)
 	mpLight =NULL;
 
 	Reset();
+
+	mspFlareSource = new openil::IL_LightSource();
 }
 
 //-----------------------------------------------------------------------
@@ -1788,6 +1820,10 @@ void cPlayerFlare::SetActive(bool abX)
 		
 		mpModel = mpInit->mpPlayerHands->GetModel("Flare");
 		mpLight = NULL;
+
+		mspFlareSource->setLight(openil::IL_Color(255, 0, 0, 0));
+		mspFlareSource->setAmbientLight();
+		mspFlareSource->play();
 	}
 	else
 	{
@@ -1799,6 +1835,10 @@ void cPlayerFlare::SetActive(bool abX)
 		{
 			mpInit->mpPlayerHands->SetCurrentModel(0,"");
 		}
+
+		
+		mspFlareSource->stop();
+	
 
 		///////////////////////////////
 		//Create entity

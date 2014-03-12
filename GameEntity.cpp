@@ -196,6 +196,7 @@ iGameEntity::~iGameEntity()
 
 void iGameEntity::SetActive(bool abX)
 {
+	Log("iGameEntity::SetActive --> %s\n", msName.c_str());
 	if(mbActive == abX) return;
 
 	mbActive =abX;
@@ -514,11 +515,136 @@ static inline tString GetCollideCommand(const tString &asFuncName,const tString 
 	return asFuncName + "(\"" + asParent+"\", \""+asChild+"\")";
 }
 
+static inline tString GetGameTypeName(eGameEntityType type)
+{
+	if (type == eGameEntityType_Unkown)
+		return "eGameEntityType_Unkown";
+
+	else if (type == eGameEntityType_Object)
+		return "eGameEntityType_Object";
+
+	else if (type == eGameEntityType_Door)
+		return "eGameEntityType_Door";
+
+	else if (type == eGameEntityType_DoorPanel)
+		return "eGameEntityType_DoorPanel";
+
+	else if (type == eGameEntityType_Area)
+		return "eGameEntityType_Area";
+
+	else if (type == eGameEntityType_Item)
+		return "eGameEntityType_Item";
+
+	else if (type == eGameEntityType_Link)
+		return "eGameEntityType_Link";
+
+	else if (type == eGameEntityType_Enemy)
+		return "eGameEntityType_Enemy";
+
+	else if (type == eGameEntityType_SwingDoor)
+		return "eGameEntityType_SwingDoor";
+
+	else if (type == eGameEntityType_StickArea)
+		return "eGameEntityType_StickArea";
+
+	else if (type == eGameEntityType_SaveArea)
+		return "eGameEntityType_SaveArea";
+
+	else if (type == eGameEntityType_Lamp)
+		return "eGameEntityType_Lamp";
+
+	else if (type == eGameEntityType_Ladder)
+		return "eGameEntityType_Ladder";
+
+	else if (type == eGameEntityType_DamageArea)
+		return "eGameEntityType_DamageArea";
+
+	else if (type == eGameEntityType_ForceArea)
+		return "eGameEntityType_ForceArea";
+
+	else if (type == eGameEntityType_LiquidArea)
+		return "eGameEntityType_LiquidArea";
+
+	else if (type == eGameEntityType_LastEnum)
+		return "eGameEntityType_LastEnum";
+
+	return "UNKNOWN";
+}
+
 ////////////////////////////
 
 void iGameEntity::OnUpdate(float afTimeStep)
 {
 	if(mbActive==false) return;
+
+	/////////////////////////////////////////////
+	/// OpenIL stuff
+	if (GetLightNum() > 0) {
+		for(size_t i=0; i<mvLights.size(); ++i) {
+
+			iLight3D * pLight = mvLights[i];
+
+			float fDist = 
+					cMath::Vector3Dist(mpInit->mpPlayer->GetCamera()->GetPosition(), pLight->GetLightPosition());
+
+
+			// TURN ON lamp
+			// TODO: Is GetFarAttenuation the right method?
+			if (fDist <= pLight->GetFarAttenuation() && pLight->IsVisible() && pLight->IsActive()) {
+
+				// Position where the OpenIL LightSource will be created
+				cVector3f vPlayerPos = mpInit->mpPlayer->GetCamera()->GetPosition();
+				cVector3f vLightPos = pLight->GetLightPosition();
+				cVector3f vToLight = vPlayerPos - vLightPos;
+
+				Log("Player position: %s\n", vPlayerPos.ToString());
+				Log("Light position: %s\n", vLightPos.ToString());
+				Log("Position to create the light: %s\n", vToLight.ToString());
+
+				// The lamp is already lit on
+				if (!pLight->GetOpenILLightSource()->isEnabled()) {
+					// TODO: A light attenuation really goes from 0 to inf, but 100 meters looks like a good-enough maximum
+					// to do the range change
+					float fOpenILRadius = openil::GetOpenILRadius(pLight->GetFarAttenuation(), 0, 100.0f);
+
+					if (pLight->GetLightType() == eLight3DType_Point) {
+						
+						pLight->GetOpenILLightSource()->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), fOpenILRadius);
+
+						Log("OpenIL point light with radius %f created\n", fOpenILRadius);
+					}
+					
+					else if (mvLights[i]->GetLightType() == eLight3DType_Spot) { 
+
+						//pLight->GetOpenILLightSource()->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), fOpenILRadius);
+
+						// Check dynamic_cast here http://www.cplusplus.com/doc/tutorial/typecasting/
+						cLight3DSpot * pSpotLight = dynamic_cast<cLight3DSpot*>(mvLights[i]);
+
+						// TODO: Is this the right way to calculate the spot direction?
+						// I did it following this http://gamedev.stackexchange.com/questions/71630/derive-direction-in-which-a-spot-light-emites-its-light-from-a-projection-matrix
+						cVector3f vDefaultPos(0, 0, -1);
+						cVector3f vLightPos = cMath::MatrixMul(pSpotLight->GetViewMatrix(), vDefaultPos);
+
+						pLight->GetOpenILLightSource()->setSpotLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), 
+							fOpenILRadius, openil::IL_Vector3D(vLightPos.x, vLightPos.y, vLightPos.z), pSpotLight->GetFOV());
+
+						Log("OpenIL spot light with radius %f, direction %s and FOV %f created\n", fOpenILRadius, vLightPos.ToString(), pSpotLight->GetFOV());
+					}
+
+					pLight->GetOpenILLightSource()->play();
+				}
+			}
+
+
+			// TURN OFF
+			else {
+				pLight->GetOpenILLightSource()->stop();
+			}
+		}
+	
+	}
+
 
 	////////////////////////////////////////////
 	/// Script Collide test stuff
@@ -648,6 +774,8 @@ void iGameEntity::OnUpdate(float afTimeStep)
 	if(mvCallbackScripts[eGameEntityScriptType_OnUpdate])
 	{
 		tString sCommand = GetScriptCommand(eGameEntityScriptType_OnUpdate);
+
+		Log("iGameEntity::OnUpdate. Running script command %s\n", sCommand.c_str());
 		mpInit->RunScriptCommand(sCommand);
 	}
     

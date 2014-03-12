@@ -592,6 +592,7 @@ void cGameObject::Update(float afTimeStep)
 	// Force offset
 	if(mbForceLightOffset)
 	{
+		Log("cGameObject::Update. Light offset on object %s\n", msName.c_str());
 		for(size_t i=0; i<mvLights.size(); ++i)
 		{
 			iLight3D *pLight = mvLights[i];
@@ -602,6 +603,9 @@ void cGameObject::Update(float afTimeStep)
 			pLight->SetPosition(pLight->GetWorldPosition() + mvLightOffset);
 		}
 	}
+
+	else
+		Log("cGameObject::Update. NOT light offset on object %s\n", msName.c_str());
 }
 
 //-----------------------------------------------------------------------
@@ -921,6 +925,8 @@ float cGameObject::GetMoveDist()
 
 void cGameObject::PushObject()
 {
+	Log("cGameObject::PushObject --> %s\n", msName.c_str());
+
 	float fDist = GetPushDist();
 
 	if(	fDist > mfMaxInteractDist)

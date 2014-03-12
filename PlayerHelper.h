@@ -25,6 +25,8 @@ using namespace hpl;
 
 #include "GameTypes.h"
 
+#include "IL_LightSource.h"
+
 class cInit;
 class cPlayer;
 
@@ -338,6 +340,8 @@ private:
 
 	cVector3f mvStart;
 	cVector3f mvEnd;
+
+	openil::IL_ref_ptr<openil::IL_LightSource> mspFlashLightSource;
 };
 
 //---------------------------------------------
@@ -362,6 +366,8 @@ private:
 	bool mbActive;
 
 	cInit *mpInit;
+
+	openil::IL_ref_ptr<openil::IL_LightSource> mspGlowStickSource;
 };
 
 //---------------------------------------------
@@ -399,6 +405,8 @@ private:
 	float mfLightPulseAdd;
 	
 	cInit *mpInit;
+
+	openil::IL_ref_ptr<openil::IL_LightSource> mspFlareSource;
 };
 
 //---------------------------------------------

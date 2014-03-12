@@ -3,3 +3,17 @@
 .DS_Store
 /*.xcodeproj/*.mode1v3
 /*.xcodeproj/*.pbxuser
+ClassDiagram1.cd
+ClassDiagram2.cd
+Penumbra.map
+Penumbra.opensdf
+Penumbra.sdf
+Penumbra.sln.old
+Penumbra.vcxproj
+Penumbra.vcxproj.filters
+UpgradeLog.XML
+_UpgradeReport_Files/UpgradeReport.css
+_UpgradeReport_Files/UpgradeReport.xslt
+_UpgradeReport_Files/UpgradeReport_Minus.gif
+_UpgradeReport_Files/UpgradeReport_Plus.gif
+ipch/penumbra-45030d90/penumbra-c643885f.ipch
