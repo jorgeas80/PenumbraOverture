@@ -580,12 +580,26 @@ void iGameEntity::OnUpdate(float afTimeStep)
 	/////////////////////////////////////////////
 	/// OpenIL stuff
 	if (GetLightNum() > 0) {
-		for(size_t i=0; i<mvLights.size(); ++i) {
 
-			iLight3D * pLight = mvLights[i];
+		Log("Type of Game entity (that contains light): %s. Name: %s\n", GetGameTypeName(mType), msName.c_str());
+
+		for(size_t i=0; i<GetLightNum(); ++i) {
+
+			iLight3D * pLight = GetLight(i);
 
 			float fDist = 
 					cMath::Vector3Dist(mpInit->mpPlayer->GetCamera()->GetPosition(), pLight->GetLightPosition());
+
+			cCamera3D * pCamera = mpInit->mpPlayer->GetCamera();
+			cFrustum * pFrustum = pCamera->GetFrustum();
+			cPlayerHands * pPlayerHands = mpInit->mpPlayerHands;
+			cPlayer * pPlayer = mpInit->mpPlayer;
+			cGraphics * pGraphics = mpInit->mpGame->GetGraphics();
+
+			if (pLight->GetOnlyAffectInSector()) {
+				Log("Light %s only affect in sector\n", msName.c_str());
+			}
+			
 
 
 			// TURN ON lamp
@@ -598,7 +612,7 @@ void iGameEntity::OnUpdate(float afTimeStep)
 				cVector3f vToLight = vPlayerPos - vLightPos;
 
 				Log("Player position: %s\n", vPlayerPos.ToString());
-				Log("Light position: %s\n", vLightPos.ToString());
+				Log("Light %s position: %s\n", pLight->GetName().c_str(), vLightPos.ToString());
 				Log("Position to create the light: %s\n", vToLight.ToString());
 
 				// The lamp is already lit on
@@ -640,6 +654,15 @@ void iGameEntity::OnUpdate(float afTimeStep)
 			// TURN OFF
 			else {
 				pLight->GetOpenILLightSource()->stop();
+
+				Log("Distance of player to light: %f\n", fDist);
+				Log("Light radius: %f\n", pLight->GetFarAttenuation());
+
+				if (!pLight->IsActive())
+					Log("Light %s is not active\n", pLight->GetName().c_str());
+
+				if (!pLight->IsVisible())
+					Log("Light %s is not visible\n", pLight->GetName().c_str());
 			}
 		}
 	
