@@ -575,14 +575,17 @@ static inline tString GetGameTypeName(eGameEntityType type)
 
 void iGameEntity::OnUpdate(float afTimeStep)
 {
+	Log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+	Log("Type of game entity: %s. Name: %s\n", GetGameTypeName(mType), GetName().c_str());
+
 	if(mbActive==false) return;
 
 	/////////////////////////////////////////////
 	/// OpenIL stuff
 	if (GetLightNum() > 0) {
 
-		Log("Type of Game entity (that contains light): %s. Name: %s\n", GetGameTypeName(mType), msName.c_str());
-
+		Log("Has lights\n");	
+	
 		for(size_t i=0; i<GetLightNum(); ++i) {
 
 			iLight3D * pLight = GetLight(i);
@@ -597,9 +600,15 @@ void iGameEntity::OnUpdate(float afTimeStep)
 			cGraphics * pGraphics = mpInit->mpGame->GetGraphics();
 
 			if (pLight->GetOnlyAffectInSector()) {
-				Log("Light %s only affect in sector\n", msName.c_str());
+				Log("Light %s only affects in sector\n", pLight->GetName().c_str());
 			}
+
 			
+			Log("Position of the light %s in the world: %s\n", pLight->GetName().c_str(), pLight->GetLightPosition().ToString().c_str());
+			//Log("Position of the player in the world: %s\n", pPlayer->GetCharacterBody()->GetFeetPosition().ToString().c_str());
+			Log("Position of the camera in the world: %s\n", pCamera->GetPosition().ToString().c_str());
+			//Log("Position of the camera's eye in the world: %s\n", pCamera->GetEyePosition().ToString().c_str());
+			//Log("Direction towards the camera is looking: %s\n", pCamera->GetForward().ToString().c_str());
 
 
 			// TURN ON lamp
@@ -666,6 +675,7 @@ void iGameEntity::OnUpdate(float afTimeStep)
 			}
 		}
 	
+		Log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 	}
 
 
