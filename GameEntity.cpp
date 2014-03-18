@@ -598,10 +598,7 @@ void iGameEntity::OnUpdate(float afTimeStep)
 			cPlayerHands * pPlayerHands = mpInit->mpPlayerHands;
 			cPlayer * pPlayer = mpInit->mpPlayer;
 			cGraphics * pGraphics = mpInit->mpGame->GetGraphics();
-
-			if (pLight->GetOnlyAffectInSector()) {
-				Log("Light %s only affects in sector\n", pLight->GetName().c_str());
-			}
+			iEntity3D * pPlayerObj = pPlayer->GetCharacterBody()->GetEntity();
 
 			
 			Log("Position of the light %s in the world: %s\n", pLight->GetName().c_str(), pLight->GetLightPosition().ToString().c_str());
@@ -613,7 +610,11 @@ void iGameEntity::OnUpdate(float afTimeStep)
 
 			// TURN ON lamp
 			// TODO: Is GetFarAttenuation the right method?
-			if (fDist <= pLight->GetFarAttenuation() && pLight->IsVisible() && pLight->IsActive()) {
+			if (fDist <= pLight->GetFarAttenuation() && 
+				pLight->IsVisible() && 
+				pLight->IsActive() && 
+				(pLight->GetOnlyAffectInSector()==false || pLight->GetOnlyAffectInSector() && pPlayerObj->IsInSector(pLight->GetCurrentSector())
+			)) {
 
 				// Position where the OpenIL LightSource will be created
 				cVector3f vPlayerPos = mpInit->mpPlayer->GetCamera()->GetPosition();
