@@ -610,6 +610,7 @@ void iGameEntity::OnUpdate(float afTimeStep)
 
 			// TURN ON lamp
 			// TODO: Is GetFarAttenuation the right method?
+			// TODO: The last condition does not fit the fact that the lamp is still on when we left the room that contains it
 			if (fDist <= pLight->GetFarAttenuation() && 
 				pLight->IsVisible() && 
 				pLight->IsActive() && 
