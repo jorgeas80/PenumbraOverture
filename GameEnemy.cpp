@@ -37,6 +37,8 @@
 
 #include "GlobalInit.h"
 
+#include "IL_EffectSource.h"
+
 tString gvStateName[STATE_NUM] = {
 	"IDLE",
 		"HUNT",
@@ -1061,6 +1063,8 @@ void iGameEnemy::OnDamage(float afX)
 
 		mfDamageSoundTimer =0.8f;
 	}
+
+	// TODO: We should rise a red effect here
 
 	mvStates[mlCurrentState]->OnTakeHit(afX);
 }

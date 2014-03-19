@@ -554,8 +554,7 @@ void iGameEntity::OnUpdate(float afTimeStep)
 			if (fDist <= pLight->GetFarAttenuation() && 
 				pLight->IsVisible() && 
 				pLight->IsActive() && 
-				(pLight->GetOnlyAffectInSector()==false || pLight->GetOnlyAffectInSector() && pPlayerObj->IsInSector(pLight->GetCurrentSector())
-			)) {
+				pLight->IsRendered()) {
 
 				// Position where the OpenIL LightSource will be created
 				cVector3f vPlayerPos = mpInit->mpPlayer->GetCamera()->GetPosition();
