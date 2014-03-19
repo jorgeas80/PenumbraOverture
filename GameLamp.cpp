@@ -172,10 +172,6 @@ cGameLamp::cGameLamp(cInit *apInit,const tString& asName) : iGameEntity(apInit,a
 	mpSubMesh = NULL;
 
 	mbSaveLights = false;
-
-	mOpenILLight = new openil::IL_LightSource();
-
-	Log("Game lamp %s created\n", asName.c_str());
 }
 
 //-----------------------------------------------------------------------
@@ -197,8 +193,6 @@ cGameLamp::~cGameLamp(void)
 
 void cGameLamp::OnPlayerPick()
 {
-	Log("cGameLamp::OnPlayerPick --> %s\n", msName.c_str());
-
 	float fPickedDist = mpInit->mpPlayer->GetPickedDist();
 	if(	fPickedDist < mfMaxInteractDist)
 	{
@@ -227,8 +221,6 @@ void cGameLamp::OnPlayerPick()
 
 void cGameLamp::OnPlayerInteract()
 {
-	Log("cGameLamp::OnPlayerInteract -->%s, at distance %f\n", msName.c_str(), mpInit->mpPlayer->GetPickedDist());
-
 	if(mpInit->mpPlayer->GetPickedDist() < mfMaxInteractDist)
 	{
 		bool bInteracted=false;
@@ -263,8 +255,6 @@ void cGameLamp::OnPlayerInteract()
 
 bool cGameLamp::OnUseItem(cInventoryItem *apItem)
 {
-	Log("cGameLamp::OnUseItem -->%s\n", msName.c_str());
-
 	if(mbLit && mbInteractOff && msOffItem==apItem->GetName())
 	{
 		SetLit(false,true);
@@ -283,8 +273,6 @@ bool cGameLamp::OnUseItem(cInventoryItem *apItem)
 
 void cGameLamp::Update(float afTimeStep)
 {
-	Log("cGameLamp::Update -->%s\n", msName.c_str());
-
 	////////////////////////////////
 	//Update alpha
 	if(mbFlickering && mbLit)
@@ -297,8 +285,6 @@ void cGameLamp::Update(float afTimeStep)
 				mvLights[i]->SetFlickerActive(true);
 				SetUpFlicker((int)i);
 			}
-
-			// Play lights in openil
 		}
 	}
 
@@ -367,8 +353,6 @@ void cGameLamp::Update(float afTimeStep)
 
 void cGameLamp::SetLit(bool abX, bool abFade)
 {
-	Log("cGameLamp::SetLit --> %s\n", msName.c_str());
-
 	if(mbLit == abX) return;
 
 	mbLit = abX;
@@ -379,7 +363,6 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 	//Turn On
 	if(mbLit)
 	{
-		Log("cGameLamp::SetLit --> %s. TURN ON\n", msName.c_str());
 		for(size_t i=0; i<mvLights.size(); ++i) 
 		{
 			mvLights[i]->SetVisible(true);
@@ -402,10 +385,10 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 										1,mvParticleSystemNames[i].m_mtxTransform);
 			mpMeshEntity->AddChild(mvParticleSystems[i]);
 			
-			Log("Creating ps %s at pos (%s) meshpos: (%s)\n",
+			/*Log("Creating ps %s at pos (%s) meshpos: (%s)\n",
 				mvParticleSystems[i]->GetName().c_str(),
 				mvParticleSystems[i]->GetWorldPosition().ToString().c_str(),
-				mpMeshEntity->GetWorldPosition().ToString().c_str());
+				mpMeshEntity->GetWorldPosition().ToString().c_str());*/
 			
 			mvParticleSystems[i]->SetTransformUpdated(true);
 			
@@ -445,7 +428,6 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 	//Turn Off
 	else
 	{
-		Log("cGameLamp::SetLit --> %s. TURN OFF\n", msName.c_str());
 		for(size_t i=0; i<mvLights.size(); ++i) 
 		{
 			mvLights[i]->SetFlickerActive(false);
@@ -492,8 +474,6 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 	{
 		tString sBool = mbLit ? "true" : "false";
 		tString sCommand = msLitChangeCallback + "("+sBool+")";
-
-		Log("cGameLamp::SetLit --> GameLamp callback: %s\n", sCommand.c_str());
 		mpInit->RunScriptCommand(sCommand);
 	}
 }
@@ -502,8 +482,6 @@ void cGameLamp::SetLit(bool abX, bool abFade)
 
 void cGameLamp::SetFlicker(bool abX)
 {
-	Log("cGameLamp::SetFlicker --> %s\n", msName.c_str());
-
 	mbFlickering = abX;
 	for(size_t i=0; i<mvLights.size(); ++i) 
 	{
@@ -516,15 +494,13 @@ void cGameLamp::SetFlicker(bool abX)
 
 void cGameLamp::Init()
 {	
-	Log("cGameLamp::Init --> %s\n", msName.c_str());
-
 	//////////////////////
 	//Set up lights
 	for(size_t i=0; i<mvLights.size(); ++i) 
 	{
 		mvLightColors.push_back(mvLights[i]->GetDiffuseColor());
 
-		Log("Setting lamp %s color to: %s\n",msName.c_str(),mvLights[i]->GetDiffuseColor().ToString().c_str());
+		//Log("Setting lamp %s color to: %s\n",msName.c_str(),mvLights[i]->GetDiffuseColor().ToString().c_str());
 
 		mvLights[i]->SetFlickerActive(mbFlickering);
 		if(mbFlickering)

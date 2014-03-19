@@ -127,9 +127,6 @@ private:
 	std::vector<cColor> mvBBColors;
 	std::vector<cGameLamp_PS> mvParticleSystemNames;
 
-	// OpenIL
-	openil::IL_ref_ptr<openil::IL_LightSource> mOpenILLight;
-
 };
 
 //--------------------------------------

@@ -196,7 +196,6 @@ iGameEntity::~iGameEntity()
 
 void iGameEntity::SetActive(bool abX)
 {
-	Log("iGameEntity::SetActive --> %s\n", msName.c_str());
 	if(mbActive == abX) return;
 
 	mbActive =abX;
@@ -515,69 +514,10 @@ static inline tString GetCollideCommand(const tString &asFuncName,const tString 
 	return asFuncName + "(\"" + asParent+"\", \""+asChild+"\")";
 }
 
-static inline tString GetGameTypeName(eGameEntityType type)
-{
-	if (type == eGameEntityType_Unkown)
-		return "eGameEntityType_Unkown";
-
-	else if (type == eGameEntityType_Object)
-		return "eGameEntityType_Object";
-
-	else if (type == eGameEntityType_Door)
-		return "eGameEntityType_Door";
-
-	else if (type == eGameEntityType_DoorPanel)
-		return "eGameEntityType_DoorPanel";
-
-	else if (type == eGameEntityType_Area)
-		return "eGameEntityType_Area";
-
-	else if (type == eGameEntityType_Item)
-		return "eGameEntityType_Item";
-
-	else if (type == eGameEntityType_Link)
-		return "eGameEntityType_Link";
-
-	else if (type == eGameEntityType_Enemy)
-		return "eGameEntityType_Enemy";
-
-	else if (type == eGameEntityType_SwingDoor)
-		return "eGameEntityType_SwingDoor";
-
-	else if (type == eGameEntityType_StickArea)
-		return "eGameEntityType_StickArea";
-
-	else if (type == eGameEntityType_SaveArea)
-		return "eGameEntityType_SaveArea";
-
-	else if (type == eGameEntityType_Lamp)
-		return "eGameEntityType_Lamp";
-
-	else if (type == eGameEntityType_Ladder)
-		return "eGameEntityType_Ladder";
-
-	else if (type == eGameEntityType_DamageArea)
-		return "eGameEntityType_DamageArea";
-
-	else if (type == eGameEntityType_ForceArea)
-		return "eGameEntityType_ForceArea";
-
-	else if (type == eGameEntityType_LiquidArea)
-		return "eGameEntityType_LiquidArea";
-
-	else if (type == eGameEntityType_LastEnum)
-		return "eGameEntityType_LastEnum";
-
-	return "UNKNOWN";
-}
-
 ////////////////////////////
 
 void iGameEntity::OnUpdate(float afTimeStep)
 {
-	Log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-	Log("Type of game entity: %s. Name: %s\n", GetGameTypeName(mType), GetName().c_str());
-
 	if(mbActive==false) return;
 
 	/////////////////////////////////////////////
@@ -809,8 +749,6 @@ void iGameEntity::OnUpdate(float afTimeStep)
 	if(mvCallbackScripts[eGameEntityScriptType_OnUpdate])
 	{
 		tString sCommand = GetScriptCommand(eGameEntityScriptType_OnUpdate);
-
-		Log("iGameEntity::OnUpdate. Running script command %s\n", sCommand.c_str());
 		mpInit->RunScriptCommand(sCommand);
 	}
     

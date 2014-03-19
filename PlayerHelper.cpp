@@ -32,11 +32,6 @@
 #include "PlayerHands.h"
 #include "GameMusicHandler.h"
 
-#include "tinythread.h"
-
-using namespace tthread;
-
-
 //////////////////////////////////////////////////////////////////////////
 // HIT GROUND CALLBACK
 //////////////////////////////////////////////////////////////////////////
@@ -1698,9 +1693,9 @@ cPlayerFlare::cPlayerFlare(cInit *apInit)
 
 	mpLight =NULL;
 
-	Reset();
-
 	mspFlareSource = new openil::IL_LightSource();
+
+	Reset();
 }
 
 //-----------------------------------------------------------------------

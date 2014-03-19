@@ -42,10 +42,6 @@
 #include "Inventory.h"
 #include "MapLoadText.h"
 
-#include "IL_LightSource.h"
-
-static openil::IL_ref_ptr<openil::IL_LightSource> mapLight = new openil::IL_LightSource();
-
 //////////////////////////////////////////////////////////////////////////
 // WORLD CACHE
 //////////////////////////////////////////////////////////////////////////
@@ -234,7 +230,7 @@ cEffectLightFlash::cEffectLightFlash(cInit *apInit,const cVector3f& avPos,
 	mfRadius = afRadius;
 	mfNegTime = afNegTime;
 	
-	Log("CREATING LIGHT FLASH. Fade to %s : %f in time %f\n",aColor.ToString().c_str(),mfRadius,afAddTime);
+	//Log("Fade to %s : %f in time %f\n",aColor.ToString().c_str(),mfRadius,afAddTime);
 	mpLight->FadeTo(aColor,mfRadius,afAddTime);
 
 	mbIsDying = false;
@@ -345,9 +341,6 @@ bool cMapHandler::Load(const tString &asFile,const tString& asStartPos)
 #endif
 	
 	unsigned long lStartTime = mpInit->mpGame->GetSystem()->GetLowLevel()->GetTime();
-
-
-	Log("------------- LOADING THE MAP %s\n", sMapName.c_str());
 
 	if(sMapName != msCurrentMap)
 	{
