@@ -26,6 +26,8 @@
 #include "GameSwingDoor.h"
 #include "MapHandler.h"
 
+#include "IL_EffectSource.h"
+
 //////////////////////////////////////////////////////////////////////////
 // BASE STATE
 //////////////////////////////////////////////////////////////////////////
@@ -1068,6 +1070,18 @@ void cGameEnemyState_Dog_Attack::OnEnterState(iGameEnemyState *apPrevState)
 		tString sCommand = mpEnemy->GetOnAttackCallback() + "(\""+mpEnemy->GetName()+"\")";
 		mpInit->RunScriptCommand(sCommand);
 	}
+
+	// OpenIL effect (expect the effects file to have been loaded)
+	// TODO: This is not the best place for blood effect. The code is the same, but it should be put in another place
+	static openil::IL_ref_ptr<openil::IL_EffectSource> bloodEffect = new openil::IL_EffectSource("BloodRed");
+
+	cVector3f vPlayerPos = mpPlayer->GetCharacterBody()->GetPosition();
+	cVector3f vDogPos = mpEnemyDog->GetPosition();
+	cVector3f vPosEffect = vPlayerPos - vDogPos;
+
+	// TODO: fine tunning of radius
+	bloodEffect->setPointLight(openil::IL_Vector3D(vPosEffect.x, vPosEffect.y, vPosEffect.z), 500);
+	bloodEffect->play(false);
 }
 
 //-----------------------------------------------------------------------
