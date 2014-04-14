@@ -522,6 +522,8 @@ void iGameEntity::OnUpdate(float afTimeStep)
 
 	/////////////////////////////////////////////
 	/// OpenIL stuff
+
+	/**
 	if (GetLightNum() > 0) {
 
 		Log("Has lights\n");	
@@ -539,13 +541,8 @@ void iGameEntity::OnUpdate(float afTimeStep)
 			cPlayer * pPlayer = mpInit->mpPlayer;
 			cGraphics * pGraphics = mpInit->mpGame->GetGraphics();
 			iEntity3D * pPlayerObj = pPlayer->GetCharacterBody()->GetEntity();
-
-			
-			Log("Position of the light %s in the world: %s\n", pLight->GetName().c_str(), pLight->GetLightPosition().ToString().c_str());
-			//Log("Position of the player in the world: %s\n", pPlayer->GetCharacterBody()->GetFeetPosition().ToString().c_str());
-			Log("Position of the camera in the world: %s\n", pCamera->GetPosition().ToString().c_str());
-			//Log("Position of the camera's eye in the world: %s\n", pCamera->GetEyePosition().ToString().c_str());
-			//Log("Direction towards the camera is looking: %s\n", pCamera->GetForward().ToString().c_str());
+			cBoundingVolume *pPlayerBV = pPlayer->GetCharacterBody()->GetBody()->GetBV();
+			iPhysicsWorld *pPhysicsWorld = mpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld();
 
 
 			// TURN ON lamp
@@ -554,7 +551,7 @@ void iGameEntity::OnUpdate(float afTimeStep)
 			if (fDist <= pLight->GetFarAttenuation() && 
 				pLight->IsVisible() && 
 				pLight->IsActive() && 
-				pLight->IsRendered()) {
+				cMath::CheckCollisionBV(*pPlayerBV,*pLight->GetBoundingVolume())) {
 
 				// Position where the OpenIL LightSource will be created
 				cVector3f vPlayerPos = mpInit->mpPlayer->GetCamera()->GetPosition();
@@ -578,7 +575,7 @@ void iGameEntity::OnUpdate(float afTimeStep)
 						Log("OpenIL point light with radius %f created\n", fOpenILRadius);
 					}
 					
-					else if (mvLights[i]->GetLightType() == eLight3DType_Spot) { 
+					else if (pLight->GetLightType() == eLight3DType_Spot) { 
 
 						//pLight->GetOpenILLightSource()->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), fOpenILRadius);
 
@@ -618,6 +615,7 @@ void iGameEntity::OnUpdate(float afTimeStep)
 	
 		Log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 	}
+	*/
 
 
 	////////////////////////////////////////////

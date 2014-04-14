@@ -2462,14 +2462,49 @@ void cPlayerHidden::Update(float afTimeStep)
 			if(cMath::CheckCollisionBV(*pPlayerBV,*pLight->GetBoundingVolume()))
 			{
 				//Check line of sight
-				if(HasLineOfSight(pLight,pPhysicsWorld)==false) continue;
+				if(HasLineOfSight(pLight,pPhysicsWorld)==false) {
+					pLight->GetOpenILLightSource()->stop();
+					continue;
+				}
 
 				//Get highest value of rg b
 				float fAmount = GetMaxRGB(pLight->GetDiffuseColor());
+
+				cVector3f vPlayerPos = pPlayerBV->GetWorldCenter();
+				cVector3f vLightPos = pLight->GetWorldPosition();
+				cVector3f vToLight = vPlayerPos - vLightPos;
 				
 				//Get distance to the light
-				float fDist = cMath::Vector3Dist(	pLight->GetWorldPosition(),
-													pPlayerBV->GetWorldCenter());
+				float fDist = cMath::Vector3Dist(	vLightPos,
+													vPlayerPos);
+
+				// The lamp is already lit on
+				if (!pLight->GetOpenILLightSource()->isEnabled()) {
+
+					// TODO: A light attenuation really goes from 0 to inf, but 100 meters looks like a good-enough maximum
+					// to do the range change
+					float fOpenILRadius = openil::GetOpenILRadius(pLight->GetFarAttenuation(), 0, 100.0f);
+
+					if (pLight->GetLightType() == eLight3DType_Point) {
+						pLight->GetOpenILLightSource()->setPointLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), fOpenILRadius);
+
+					}
+					
+					else if (pLight->GetLightType() == eLight3DType_Spot) { 
+						// Check static and dynamic_cast here http://www.cplusplus.com/doc/tutorial/typecasting/
+						cLight3DSpot * pSpotLight = static_cast<cLight3DSpot*>(pLight);
+
+						// TODO: Is this the right way to calculate the spot direction?
+						// I did it following this http://gamedev.stackexchange.com/questions/71630/derive-direction-in-which-a-spot-light-emites-its-light-from-a-projection-matrix
+						cVector3f vDefaultPos(0, 0, -1);
+						cVector3f vLightDir = cMath::MatrixMul(pSpotLight->GetViewMatrix(), vDefaultPos);
+
+						pLight->GetOpenILLightSource()->setSpotLight(openil::IL_Vector3D(vToLight.x, vToLight.y, vToLight.z), 
+							fOpenILRadius, openil::IL_Vector3D(vLightDir.x, vLightDir.y, vLightDir.z), pSpotLight->GetFOV());
+					}
+
+					pLight->GetOpenILLightSource()->play();
+				}
 
 				//Calculate attenuation
 				float fT = 1 - fDist / pLight->GetFarAttenuation();
